@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PokedexApplication<pokedex>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "semantic.pokedex.PokedexApplication",
+            "projectName": "pokedex",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
