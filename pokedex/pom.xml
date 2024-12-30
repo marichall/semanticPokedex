@@ -70,6 +70,11 @@
 			<version>5.2.0</version> 
 			<type>pom</type>
 		</dependency>
+		<dependency>
+    		<groupId>info.bliki.wiki</groupId>
+    		<artifactId>bliki-core</artifactId>
+    		<version>3.1.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
