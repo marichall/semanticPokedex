@@ -42,7 +42,7 @@ public class RDFController {
     @GetMapping(value = "/generate-rdf", produces = "application/rdf+xml")
     public String generateRDF() {
         try {
-            String filePath = "/home/hany/FAC/M2/S9/SemanticWeb/Projet/semanticWeb/pokedex/InfoBox/Bullbasaur_Infobox.txt";
+            String filePath = "../../../../InfoBox/Bullbasaur_Infobox.txt";
             Map<String, String> infoboxParams = parserService.parseInfobox(filePath);
             Model rdfModel = rdfGeneratorService.generateRDF(infoboxParams);
             return rdfGeneratorService.serializeRDF(rdfModel);
@@ -79,4 +79,54 @@ public class RDFController {
 
         return "RDF generation completed for " + count + " Pokémon.";
     }
+
+    @GetMapping(value = "/generateAllRdf", produces = "text/plain")
+    public String generateAllRdf() {
+        // Étape 1 : Récupérer la liste des types d'infobox
+        List<String> infoboxTypes = categoryPageService.getInfoboxTypes("Category:Infobox templates");
+        if (infoboxTypes.isEmpty()) {
+            return "Failed to retrieve infobox types.";
+        }
+
+        int totalCount = 0;
+        StringBuilder report = new StringBuilder();
+
+        // Étape 2 : Traiter chaque type d'infobox
+        for (String infoboxType : infoboxTypes) {
+            report.append("Processing infobox type: ").append(infoboxType).append("\n");
+
+            // Étape 3 : Récupérer les pages associées à ce type d'infobox
+            List<String> pageTitles = mediaWikiApiService.getPagesUsingTemplate(infoboxType);
+            if (pageTitles.isEmpty()) {
+                report.append("No pages found for infobox type: ").append(infoboxType).append("\n");
+                continue;
+            }
+
+            int typeCount = 0;
+
+            // Étape 4 : Parcourir chaque page et extraire les données
+            for (String pageTitle : pageTitles) {
+                System.out.println("Processing page: " + pageTitle);
+
+                // Récupérer le wikitext de la page
+                String wikitext = pokemonListService.getPokemonInfoBox(pageTitle);
+                Map<String, String> infoboxData = parserService.extractTemplateParameters(wikitext, infoboxType);
+
+                if (infoboxData != null && !infoboxData.isEmpty()) {
+                    // Générer le RDF pour cette page
+                    rdfGeneratorService.generateRdf(pageTitle, infoboxData);
+                    typeCount++;
+                } else {
+                    System.out.println("No infobox data found for page: " + pageTitle);
+                }
+            }
+
+            totalCount += typeCount;
+            report.append("Completed processing for infobox type: ").append(infoboxType)
+                .append(" (").append(typeCount).append(" pages processed)\n");
+        }
+
+        return "RDF generation completed for " + totalCount + " pages.\n" + report.toString();
+    }
+
 }
