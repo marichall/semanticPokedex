@@ -90,6 +90,7 @@ public class RDFController {
         return "RDF generation completed for " + count + " Pokémon.";
     }
 
+    // Pas utilisé, à voir par la suite si on supprime
     @GetMapping(value = "/generateRdfInfoboxTypes", produces = "text/plain")
     public String generateRdfInfoboxTypes() {
         List<String> infoboxTypes = categoryPageService.getInfoboxTypes();
@@ -103,5 +104,59 @@ public class RDFController {
             count++;
         }
         return "RDF generation completed for " + count + " infobox types, for all pokemons.";
+    }
+
+    @GetMapping(value = "/generateAllInfoboxForAllPokemons", produces = "text/turtle")
+    public String generateAllInfoboxForAllPokemons() {
+        List<String> pokemonList = pokemonListService.getPokemonList();
+        if (pokemonList.isEmpty()) {
+            return "Failed to retrieve Pokémon list.";
+        }
+        List<String> infoboxTypes = categoryPageService.getInfoboxTypes();
+        if (infoboxTypes.isEmpty()) {
+            return "Failed to retrieve infobox types.";
+        }
+        int countPokemon = 0;
+        int countInfoboxType = 0;
+        String pokemonWikitext = "";
+        // For all pokemons
+        // juste pour tester on prend les 10 premiers
+        int limit = 1;
+        int processedCount = 0;
+        for (String pokemonName : pokemonList) {
+            if (processedCount >= limit) {
+                break;
+            }
+            // System.out.println("Processing " + pokemonName);
+            Map<String, String> infoboxData = null;
+            countInfoboxType = 0;
+            pokemonWikitext = mediaWikiApiService.getPokemonPageWikitext(pokemonName);
+            // For all infobox types
+            for (String infoboxType : infoboxTypes) {
+                Map<String, String> currentInfoboxData = parserService.extractTemplateParameters(pokemonWikitext, infoboxType);
+                if (currentInfoboxData != null && !currentInfoboxData.isEmpty()) {
+                    if (infoboxData == null) {
+                        infoboxData = currentInfoboxData;
+                    } else {
+                        infoboxData.putAll(currentInfoboxData);
+                    }
+                    countInfoboxType++;
+                    System.out.println("Infobox " + infoboxType + " found for " + pokemonName + ".");
+                } else {
+                    // System.out.println("No infobox " + infoboxType + " found for " + pokemonName + ".");
+                }
+            }
+            if(countInfoboxType == 0 || infoboxData == null){
+                // System.out.println("Any infobox found for " + pokemonName + ".");
+            }else{
+                rdfGeneratorService.generateRdf(pokemonName, infoboxData);
+                // System.out.println("RDF generation completed for " + countInfoboxType + " infobox types for " + pokemonName + ".");
+            }
+            System.out.println("RDF generation completed for " + countInfoboxType + " infobox types for " + pokemonName + ".");
+            countPokemon++;
+            processedCount++;
+        }
+
+        return "RDF generation completed for " + countPokemon + " Pokémon.";
     }
 }
