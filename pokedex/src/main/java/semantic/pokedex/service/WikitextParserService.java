@@ -18,9 +18,9 @@ public class WikitextParserService {
      * @return Map of infobox properties.
      * @throws IOException Si la lecture du fichier échoue.
      */
-    public Map<String, String> parseInfobox(String filePath) throws IOException {
+    public Map<String, String> parseInfobox(String filePath, String InfoBoxType) throws IOException {
         String wikitext = new String(Files.readAllBytes(Paths.get(filePath)));
-        return extractTemplateParameters(wikitext, "Pokémon Infobox");
+        return extractTemplateParameters(wikitext, InfoBoxType);
     }
 
     /**

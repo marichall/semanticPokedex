@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import semantic.pokedex.service.CategoryPageService;
+import semantic.pokedex.service.MediaWikiApiService;
 import semantic.pokedex.service.PokemonListService;
 import semantic.pokedex.service.RDFGeneratorService;
 import semantic.pokedex.service.RDFService;
@@ -32,6 +34,12 @@ public class RDFController {
     @Autowired
     private PokemonListService pokemonListService;
 
+    @Autowired
+    private MediaWikiApiService mediaWikiApiService;
+
+    @Autowired
+    private CategoryPageService categoryPageService;
+
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     public String addPokemon() {
@@ -39,12 +47,13 @@ public class RDFController {
         return "D";
     }
 
-    @GetMapping(value = "/generate-rdf", produces = "application/rdf+xml")
-    public String generateRDF() {
+    @GetMapping(value = "/generateRdfBulbasaur", produces = "application/rdf+xml")
+    public String generateRdfForBulbasaur() {
         try {
             String filePath = "../../../../InfoBox/Bullbasaur_Infobox.txt";
-            Map<String, String> infoboxParams = parserService.parseInfobox(filePath);
-            Model rdfModel = rdfGeneratorService.generateRDF(infoboxParams);
+            String infoboxType = "Pokémon Infobox";
+            Map<String, String> infoboxParams = parserService.parseInfobox(filePath, infoboxType) ;
+            Model rdfModel = rdfGeneratorService.generateRdfForBulbasaur(infoboxParams);
             return rdfGeneratorService.serializeRDF(rdfModel);
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,8 +62,8 @@ public class RDFController {
     }
 
 
-    @GetMapping(value = "/generateRdf", produces = "text/plain")
-    public String generateRdf() {
+    @GetMapping(value = "/generateRdfPokemonList", produces = "text/plain")
+    public String generateRdfPokemonList(@RequestParam(required = false) String infoBoxType) {
         List<String> pokemonList = pokemonListService.getPokemonList();
         if (pokemonList.isEmpty()) {
             return "Failed to retrieve Pokémon list.";
@@ -65,8 +74,9 @@ public class RDFController {
         for (String pokemonName : pokemonList) {
 
             System.out.println("Processing " + pokemonName);
-            pokemonWikitext = pokemonListService.getPokemonInfoBox(pokemonName);
-            Map<String, String> infoboxData = parserService.extractTemplateParameters(pokemonWikitext, "Pokémon Infobox");
+            pokemonWikitext = mediaWikiApiService.getPokemonPageWikitext(pokemonName);
+            String templateType = (infoBoxType != null) ? infoBoxType : "Pokémon Infobox";
+            Map<String, String> infoboxData = parserService.extractTemplateParameters(pokemonWikitext, templateType);
             if (infoboxData != null && !infoboxData.isEmpty()) {
                 rdfGeneratorService.generateRdf(pokemonName, infoboxData);
                 // System.err.println("RDF for " + pokemonName + " generated.");
@@ -80,53 +90,18 @@ public class RDFController {
         return "RDF generation completed for " + count + " Pokémon.";
     }
 
-    @GetMapping(value = "/generateAllRdf", produces = "text/plain")
-    public String generateAllRdf() {
-        // Étape 1 : Récupérer la liste des types d'infobox
-        List<String> infoboxTypes = categoryPageService.getInfoboxTypes("Category:Infobox templates");
+    @GetMapping(value = "/generateRdfInfoboxTypes", produces = "text/plain")
+    public String generateRdfInfoboxTypes() {
+        List<String> infoboxTypes = categoryPageService.getInfoboxTypes();
         if (infoboxTypes.isEmpty()) {
             return "Failed to retrieve infobox types.";
         }
-
-        int totalCount = 0;
-        StringBuilder report = new StringBuilder();
-
-        // Étape 2 : Traiter chaque type d'infobox
+        int count = 0;
         for (String infoboxType : infoboxTypes) {
-            report.append("Processing infobox type: ").append(infoboxType).append("\n");
-
-            // Étape 3 : Récupérer les pages associées à ce type d'infobox
-            List<String> pageTitles = mediaWikiApiService.getPagesUsingTemplate(infoboxType);
-            if (pageTitles.isEmpty()) {
-                report.append("No pages found for infobox type: ").append(infoboxType).append("\n");
-                continue;
-            }
-
-            int typeCount = 0;
-
-            // Étape 4 : Parcourir chaque page et extraire les données
-            for (String pageTitle : pageTitles) {
-                System.out.println("Processing page: " + pageTitle);
-
-                // Récupérer le wikitext de la page
-                String wikitext = pokemonListService.getPokemonInfoBox(pageTitle);
-                Map<String, String> infoboxData = parserService.extractTemplateParameters(wikitext, infoboxType);
-
-                if (infoboxData != null && !infoboxData.isEmpty()) {
-                    // Générer le RDF pour cette page
-                    rdfGeneratorService.generateRdf(pageTitle, infoboxData);
-                    typeCount++;
-                } else {
-                    System.out.println("No infobox data found for page: " + pageTitle);
-                }
-            }
-
-            totalCount += typeCount;
-            report.append("Completed processing for infobox type: ").append(infoboxType)
-                .append(" (").append(typeCount).append(" pages processed)\n");
+            System.out.println("Processing " + infoboxType);
+            generateRdfPokemonList(infoboxType);
+            count++;
         }
-
-        return "RDF generation completed for " + totalCount + " pages.\n" + report.toString();
+        return "RDF generation completed for " + count + " infobox types, for all pokemons.";
     }
-
 }

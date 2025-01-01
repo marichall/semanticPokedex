@@ -8,7 +8,6 @@ import org.apache.jena.vocabulary.RDF;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.Map;
@@ -25,7 +24,7 @@ public class RDFGeneratorService {
      * @param infoboxParams Une map des propriétés contenues dans l'infobox.
      * @return Modèle Jena Model représentant le graphe RDF.
      */
-    public Model generateRDF(Map<String, String> infoboxParams) {
+    public Model generateRdfForBulbasaur(Map<String, String> infoboxParams) {
         Model model = ModelFactory.createDefaultModel();
 
         // Définition de préfix (pour l'instant ça n'a aucun sens)
