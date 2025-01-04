@@ -2,10 +2,12 @@ package semantic.pokedex.service;
 
 import org.springframework.stereotype.Service;
 
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -45,6 +47,7 @@ public class WikitextParserService {
         }
 
         String templateContent = wikitext.substring(startIdx + templateStart.length(), endIdx).trim();
+        System.err.println("TEMPLATE CONTENT IN WIKITEXT PARSER SERVICE IS = " + templateContent);
         String[] lines = templateContent.split("\\|");
 
         for (String line : lines) {
@@ -58,4 +61,16 @@ public class WikitextParserService {
 
         return params;
     }
+
+    public List<TemplateData> parseTemplates(String wikitext) {
+        MyWikiModel model = new MyWikiModel("", "");
+        try {
+            model.render(wikitext);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } 
+        return model.getCollectedTemplates();
+    }
+
+
 }

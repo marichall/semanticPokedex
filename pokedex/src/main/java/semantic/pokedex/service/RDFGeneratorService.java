@@ -69,7 +69,6 @@ public class RDFGeneratorService {
         model.setNsPrefix("rdf", RDF.getURI());
 
         Resource pokemonResource = model.createResource(exNS + encodeName(pokemonName));
-
         // Boucle sur l'info box et les propriétés
         for (Map.Entry<String, String> entry : infoboxData.entrySet()) {
             String key = entry.getKey().replace(" ", "_").toLowerCase();
