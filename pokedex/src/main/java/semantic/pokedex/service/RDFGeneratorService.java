@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.Map;
+import java.io.File;
 
 @Service
 public class RDFGeneratorService {
@@ -63,7 +64,7 @@ public class RDFGeneratorService {
     }
 
 
-    public void generateRdf(String pokemonName, Map<String, String> infoboxData) {
+    public void generatePokemonInfoboxRdf(String pokemonName, Map<String, String> infoboxData) {
         Model model = ModelFactory.createDefaultModel();
         model.setNsPrefix("pokemon", exNS);
         model.setNsPrefix("rdf", RDF.getURI());
@@ -84,6 +85,26 @@ public class RDFGeneratorService {
             model.write(out, "TURTLE");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public String generateRdfWithModel(Model model, String directory, String rdfName){
+        String filePath = directory + "/" + encodeName(rdfName) + ".ttl";
+        this.createDirectoryIfNotExists(directory);
+        
+        try (OutputStream out = new FileOutputStream(filePath)) {
+            model.write(out, "TURTLE");
+            return "RDF generation completed for all pages.";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Failed to generate RDF triples.";
+        }
+    }
+
+    public void createDirectoryIfNotExists(String directoryName) {
+        File directory = new File(directoryName);
+        if (!directory.exists()) {
+            directory.mkdirs();
         }
     }
 

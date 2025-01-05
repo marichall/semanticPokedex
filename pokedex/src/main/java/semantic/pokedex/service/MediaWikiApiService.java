@@ -1,8 +1,8 @@
 package semantic.pokedex.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import org.apache.jena.rdf.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -146,7 +146,75 @@ public class MediaWikiApiService {
             return pages;
         }
     }
+
+    /**
+     * Récupère toutes les pages du wiki
+     * 
+     * @return Une liste de toutes les pages trouvés
+     */
+    public List<String> getAllPages() {
+        List<String> allPages = new ArrayList<>();
+        String apcontinue = null;
     
+        do {
+            // Construire l'URL avec le paramètre de pagination si nécessaire
+            String url = API_ENDPOINT + "?action=query&list=allpages&aplimit=max&format=json";
+            if (apcontinue != null) {
+                url += "&apcontinue=" + apcontinue;
+            }
+    
+            // Appeler l'API pour obtenir les pages
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+    
+            try {
+                // Lire la réponse JSON
+                com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+                com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(response.getBody());
+    
+                // Extraire les pages de la réponse
+                com.fasterxml.jackson.databind.JsonNode pages = root.path("query").path("allpages");
+                if (!pages.isMissingNode()) {
+                    for (com.fasterxml.jackson.databind.JsonNode page : pages) {
+                        String title = page.path("title").asText();
+                        allPages.add(title);
+                    }
+                }
+    
+                // Gerer la pagination s'il y en a
+                com.fasterxml.jackson.databind.JsonNode cont = root.path("continue").path("apcontinue");
+                apcontinue = cont.isMissingNode() ? null : cont.asText();
+            } catch (Exception e) {
+                e.printStackTrace();
+                break;
+            }
+        // Continuer tant qu'il y a des pages suivantes
+        } while (apcontinue != null); 
+    
+        return allPages;
+    }
+
+    /**
+     * Génère des triplets pour toutes les pages du wiki
+     * 
+     * @return Un model RDF contenant les triplets de toutes les pages
+     */
+    public Model generateTriplesForAllPages() {
+        List<String> allPages = getAllPages();
+        Model model = ModelFactory.createDefaultModel();
+    
+        for (String page : allPages) {
+            String pageURI = "http://example.org/page/" + encodeTitle(page); // URI pour la page
+            String resourceURI = "http://example.org/resource/" + encodeTitle(page); // URI pour l'entité
+    
+            Resource pageResource = model.createResource(pageURI);
+            Resource entityResource = model.createResource(resourceURI);
+    
+            model.add(pageResource, model.createProperty("http://www.w3.org/2002/07/owl#sameAs"), entityResource);
+        }
+    
+        return model;
+    }    
+       
 
     private String encodeTitle(String title) {
         return title.replace(" ", "_");

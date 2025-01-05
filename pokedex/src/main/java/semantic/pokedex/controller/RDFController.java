@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.apache.jena.rdf.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,7 +41,6 @@ public class RDFController {
 
     @Autowired
     private CategoryPageService categoryPageService;
-
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     public String addPokemon() {
@@ -80,7 +78,7 @@ public class RDFController {
             String templateType = (infoBoxType != null) ? infoBoxType : "Pokémon Infobox";
             Map<String, String> infoboxData = parserService.extractTemplateParameters(pokemonWikitext, templateType);
             if (infoboxData != null && !infoboxData.isEmpty()) {
-                rdfGeneratorService.generateRdf(pokemonName, infoboxData);
+                rdfGeneratorService.generatePokemonInfoboxRdf(pokemonName, infoboxData);
                 // System.err.println("RDF for " + pokemonName + " generated.");
             } else {
                 System.out.println("No infobox found for " + pokemonName + ".");
@@ -107,9 +105,6 @@ public class RDFController {
         }
         return "RDF generation completed for " + count + " infobox types, for all pokemons.";
     }
-
-
-
 
     @GetMapping(value = "/generateAllInfoboxForAllPokemons", produces = "text/plain")
     public String generateAllInfoboxForAllPokemons() {
@@ -147,7 +142,7 @@ public class RDFController {
                 // 3eme boucle : Pour chaque page, on récupère les paramètre de l'infobox, et on parse.
                 for (TemplateData t : infoBoxToParse) {
                     params = t.getParams();
-                    rdfGeneratorService.generateRdf(page, params);
+                    rdfGeneratorService.generatePokemonInfoboxRdf(page, params);
             }
         }
     }
@@ -155,4 +150,11 @@ public class RDFController {
     int countPokemon = 0;
     return "RDF generation completed for " + countPokemon + " Pokémon.";
     }
+
+    @GetMapping(value = "/generateTriplesForAllPages", produces = "text/turtle")
+    public String generateTriplesForAllPages() {
+        Model model = mediaWikiApiService.generateTriplesForAllPages();
+        return rdfGeneratorService.generateRdfWithModel(model, "allPages", "rdfTriplet");
+    }
+
 }
