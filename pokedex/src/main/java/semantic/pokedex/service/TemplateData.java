@@ -2,6 +2,10 @@ package semantic.pokedex.service;
 
 import java.util.Map;
 
+/**
+ * Cette class sert à représenter un template extrait du wikitext.
+ * Contient le nom du template (par exemple MoveInfobox ou PokemonInfobox) et ses paramètres associés.
+ */
 public class TemplateData {
     public String name;
     public Map<String, String> params;

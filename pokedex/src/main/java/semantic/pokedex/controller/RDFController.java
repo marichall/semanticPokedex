@@ -117,6 +117,7 @@ public class RDFController {
         if (infoboxTypes.isEmpty()) {
             return "Failed to retrieve infobox types.";
         }
+        //Liste des infobox, pour pas toutes les faire
         List<String> infoBoxes = new ArrayList<String>() {{
             add("BattleEInfobox");
             add("Character Infobox");
@@ -124,68 +125,34 @@ public class RDFController {
         }};
         System.err.println(infoboxTypes);
 
-        // List<String> transcludedPages = null;
         List<String> listOfPages = null;
         String pageWikitext = "";
         List<TemplateData> templates = null; 
         List<TemplateData> infoBoxToParse = null;
         Map<String, String> params = null;
+        // Première boucle : boucle sur la liste des infobox
         for(String iterator : infoBoxes){
+            // Ici, on récupère la liste des pages qui utilisent cette infobox
             listOfPages = mediaWikiApiService.getPagesUsingTemplate(iterator);
             System.err.println("Treating category : " + iterator + "\n\n");
             System.err.println("SIZE OF LIST OF PAGES " + listOfPages.size() + "\n\n");
             System.err.println("PAGES \n\n" + listOfPages + "\n\n");
+            // 2eme boucle :  boucle sur la liste des pages.
             for(String page : listOfPages){
                 System.err.println("Treating page : " + page + "\n\n");
                 pageWikitext = mediaWikiApiService.getPageWikitext(page);
                 templates = parserService.parseTemplates(pageWikitext);
                 infoBoxToParse = templates.stream().filter(t -> iterator.equalsIgnoreCase(t.getName())).collect(Collectors.toList());
                 page = page.replaceAll("[/:\\\\]", "_");
+                // 3eme boucle : Pour chaque page, on récupère les paramètre de l'infobox, et on parse.
                 for (TemplateData t : infoBoxToParse) {
                     params = t.getParams();
                     rdfGeneratorService.generateRdf(page, params);
             }
         }
     }
-        
-        
-        
-        // System.err.println(transcludedPages + "\n     SIZE = " + transcludedPages.size());
-        // Gets the text of the main page and prints it.
-        // String hiddenRuins = mediaWikiApiService.getPageWikitext(transcludedPages.get(0));
-        // System.err.println("\n\n\n" + hiddenRuins);
-        int countPokemon = 0;
-        // For all pokemons
-        // juste pour tester on prend les "limit" premiers
-        // int limit = 1;
-        // int processedCount = 0;
-        // System.out.println("Processing " + pokemonName);
-        // String pokemonWikitext = mediaWikiApiService.getPageWikitext(transcludedPages.get(1));
-    //     System.err.println("THE PAGE 0 IS " + transcludedPages.get(1));
-    //     List<TemplateData> templates = parserService.parseTemplates(pokemonWikitext);
-    //     List<TemplateData> moveInfoBoxes = templates
-    // .stream()
-    // .filter(t -> "MoveInfobox".equalsIgnoreCase(t.getName()))
-    // .collect(Collectors.toList());
-    // Map<String, String> params = null;
-    //     for (TemplateData t : moveInfoBoxes) {
-    //         params = t.getParams();
-    //         rdfGeneratorService.generateRdf(transcludedPages.get(1), params);
-    //         System.err.println(params);
-    //         // String moveName = params.get("name");
-            // String power = params.get("jname");
-            // System.out.println("Nom du template : " + moveName);
-            // System.out.println("Paramètres       : " + power);
-            // System.out.println("-----------------------------------");
-        // }
-        // System.err.println("THIS IS THE WIKITEXT " + pokemonWikitext);
-        // System.err.println("\n\n\n\n");
-        // Map<String, String> infoboxData = parserService.extractTemplateParameters(pokemonWikitext, "MoveInfobox");
-        // System.err.println("THE INFO BOX IS " + infoboxData);
-        // rdfGeneratorService.generateRdf(transcludedPages.get(0), infoboxData);
-        // pokemonWikitext = mediaWikiApiService.getPokemonPageWikitext(pokemonName);
-        // For all infobox types
-        // System.err.println(infoboxTypes);
-        return "RDF generation completed for " + countPokemon + " Pokémon.";
+    // J'ai laissé cette variable dans le cas où on souhaiterait compter ou afficher un nombre d'infobox ou autre.
+    int countPokemon = 0;
+    return "RDF generation completed for " + countPokemon + " Pokémon.";
     }
 }

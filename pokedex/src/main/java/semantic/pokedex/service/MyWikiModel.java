@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Class personnalisée qui étend WikiModel de Bliki pour intercepter et collecter les templates.
+ * Permet d'extraire les informations des templates présents dans le wikitext.
+ */
 public class MyWikiModel extends WikiModel {
 
     // On garde ici tous les templates rencontrés
@@ -27,15 +31,15 @@ public class MyWikiModel extends WikiModel {
      *                                    Appendable writer)
      *     throws IOException
      */
+    // Cette méthode n'est pas utilisée (On en aura peut-être besoin plus tard, à voir.)
     @Override
     public void substituteTemplateCall(String templateName,
                                        Map<String, String> parameterMap,
                                        Appendable writer) throws IOException {
-        // 1. Stocker le template dans la liste
+        //Stockage de la template dans la liste
         TemplateData data = new TemplateData(templateName, parameterMap);
         templates.add(data);
 
-        // 2. Laisser Bliki gérer l’expansion/rendu du template comme d’habitude
         super.substituteTemplateCall(templateName, parameterMap, writer);
     }
 

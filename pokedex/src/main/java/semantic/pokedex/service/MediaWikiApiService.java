@@ -68,10 +68,18 @@ public class MediaWikiApiService {
         }
     }
 
-    private List<String> getPagesUsingTemplateWithContinue(String templateName, String blcontinue) {
+     /**
+     * Méthode helper utilisée pour gérer la pagination des résultats de l'API MediaWiki.
+     * Elle récupère les pages suivantes utilisant le template spécifié en utilisant le token de continuation.
+     *
+     * @param templateName Le nom du template dont on veut trouver les pages qui l'utilisent.
+     * @param eicontinue   Le token de continuation fourni par l'API MediaWiki pour récupérer la prochaine série de résultats.
+     * @return Une liste de titres de pages utilisant le template spécifié.
+     */
+    private List<String> getPagesUsingTemplateWithContinue(String templateName, String eicontinue) {
         String url = API_ENDPOINT + "?action=query&list=backlinks&bltitle=Template:" 
-                     + encodeTitle(templateName) + "&blfilterredir=nonredirects&bllimit=max&blcontinue=" 
-                     + blcontinue + "&format=json";
+                     + encodeTitle(templateName) + "&eilimit=max&eicontinue=" 
+                     + eicontinue + "&format=json";
 
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         List<String> pages = new ArrayList<>();
@@ -80,7 +88,7 @@ public class MediaWikiApiService {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(response.getBody());
 
-            com.fasterxml.jackson.databind.JsonNode backlinks = root.path("query").path("backlinks");
+            com.fasterxml.jackson.databind.JsonNode backlinks = root.path("query").path("embeddedin");
             if (!backlinks.isMissingNode()) {
                 for (com.fasterxml.jackson.databind.JsonNode backlink : backlinks) {
                     String title = backlink.path("title").asText();
@@ -89,7 +97,7 @@ public class MediaWikiApiService {
             }
 
             // Récupérer la suite si nécessaire
-            com.fasterxml.jackson.databind.JsonNode cont = root.path("continue").path("blcontinue");
+            com.fasterxml.jackson.databind.JsonNode cont = root.path("continue").path("eicontinue");
             if (!cont.isMissingNode()) {
                 pages.addAll(getPagesUsingTemplateWithContinue(templateName, cont.asText()));
             }
@@ -101,6 +109,12 @@ public class MediaWikiApiService {
         }
     }
 
+     /**
+     * Récupère toutes les pages qui utilisent un template spécifique en gérant la pagination via des tokens de continuation.
+     *
+     * @param templateName Le nom du template dont on veut trouver les pages utilisant.
+     * @return Une liste de titres de pages utilisant le template spécifié.
+     */
     public List<String> getPagesUsingTemplate(String templateName) {
         String url = API_ENDPOINT + "?action=query&list=embeddedin&eititle=Template:"
                                 + encodeTitle(templateName) + "&eilimit=max&format=json";
@@ -120,7 +134,7 @@ public class MediaWikiApiService {
                 }
             }
 
-            // Gérer la pagination
+            // On gère la pagination s'il y en a
             com.fasterxml.jackson.databind.JsonNode cont = root.path("continue").path("eicontinue");
             if (!cont.isMissingNode()) {
                 pages.addAll(getPagesUsingTemplateWithContinue(templateName, cont.asText()));
