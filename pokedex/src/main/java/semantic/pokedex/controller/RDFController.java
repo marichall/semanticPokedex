@@ -151,10 +151,11 @@ public class RDFController {
     return "RDF generation completed for " + countPokemon + " Pokémon.";
     }
 
-    @GetMapping(value = "/generateTriplesForAllPages", produces = "text/turtle")
+    @GetMapping(value = "/generateTriplesForAllPages", produces = "text/plain")
     public String generateTriplesForAllPages() {
         Model model = mediaWikiApiService.generateTriplesForAllPages();
-        return rdfGeneratorService.generateRdfWithModel(model, "allPages", "rdfTriplet");
+        rdfService.addModel(model);
+        return "Triples generated for all pages.";
     }
 
 }

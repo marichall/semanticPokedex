@@ -5,6 +5,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.vocabulary.RDF;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.FileOutputStream;
@@ -18,6 +19,8 @@ public class RDFGeneratorService {
     String exNS = "http://example.org/pokemon/";
     String schemaNS = "http://schema.org/";
 
+    @Autowired
+    private RDFService rdfService;
 
     /**
      * Génère un modèle RDF depuis des paramètres dans l'infobox.
@@ -79,33 +82,9 @@ public class RDFGeneratorService {
             // For simplicity, all values are literals. Enhance by defining proper types or linking to other resources.
             pokemonResource.addProperty(property, value);
         }
-        String filePath = "InfoBox/" + encodeName(pokemonName) + ".ttl";
+        // String filePath = "InfoBox/" + encodeName(pokemonName) + ".ttl";
         // Écriture du parsing de l'infobox dans un fichier ttl (pour l'instant)
-        try (OutputStream out = new FileOutputStream(filePath)) {
-            model.write(out, "TURTLE");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String generateRdfWithModel(Model model, String directory, String rdfName){
-        String filePath = directory + "/" + encodeName(rdfName) + ".ttl";
-        this.createDirectoryIfNotExists(directory);
-        
-        try (OutputStream out = new FileOutputStream(filePath)) {
-            model.write(out, "TURTLE");
-            return "RDF generation completed for all pages.";
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Failed to generate RDF triples.";
-        }
-    }
-
-    public void createDirectoryIfNotExists(String directoryName) {
-        File directory = new File(directoryName);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
+        rdfService.addModel(model); // Appel à une méthode pour ajouter le modèle dans Fuseki
     }
 
     private String encodeName(String name) {

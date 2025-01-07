@@ -18,6 +18,14 @@ public class RDFService {
     String graphStore = url + "/data";
     RDFConnection conn = RDFConnectionFactory.connect(sparqlEndpoint, updateEndpoint, graphStore);
 
+    public void addModel(Model model) {
+        try {
+            conn.load(model);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void addData() {
         Model model = ModelFactory.createDefaultModel();
 
