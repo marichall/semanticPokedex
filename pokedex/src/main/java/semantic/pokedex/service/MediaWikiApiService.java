@@ -14,8 +14,7 @@ public class MediaWikiApiService {
 
     private static final String API_ENDPOINT = "https://bulbapedia.bulbagarden.net/w/api.php";
     private static final String URI = "http://localhost:8080"; 
-    // private String resourceURI = "http://localhost:8080/resource/"; 
-    private String sameAsURI = "http://www.w3.org/2002/07/owl#sameAs";
+    private String bullbapediaWikiUrl = "https://bulbapedia.bulbagarden.net/wiki"; 
 
     @Autowired
     private RestTemplate restTemplate;
@@ -214,9 +213,8 @@ public class MediaWikiApiService {
         Resource entityResource;
         
         for (String page : allPages) {
-            pageResource = model.createResource(API_ENDPOINT + "/" + encodeTitle(page));
+            pageResource = model.createResource(bullbapediaWikiUrl + "/" + encodeTitle(page));
             entityResource = model.createResource(URI + "/" + encodeTitle(page));
-            
             // model.add(pageResource, type, webPageResource);
             // model.add(pageResource, type, thingResource);
             model.add(entityResource, mainEntityOfPage, pageResource);
