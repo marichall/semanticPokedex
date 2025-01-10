@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class TsvParserService {
     /**
      * Parse un fichier TSV et retourne les données sous forme de liste.
@@ -45,5 +48,11 @@ public class TsvParserService {
         }
 
         return data;
+    }
+
+    public List<String> getAllParameters(String templateType){
+        List<String> allParam = null;
+        
+        return allParam;
     }
 }
