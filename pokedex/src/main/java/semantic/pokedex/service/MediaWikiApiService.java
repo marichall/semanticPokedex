@@ -3,6 +3,7 @@ package semantic.pokedex.service;
 import java.util.*;
 
 import org.apache.jena.rdf.model.*;
+import org.checkerframework.checker.units.qual.s;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,9 @@ import org.springframework.web.client.RestTemplate;
 public class MediaWikiApiService {
 
     private static final String API_ENDPOINT = "https://bulbapedia.bulbagarden.net/w/api.php";
+    private static final String URI = "http://localhost:8080"; 
+    // private String resourceURI = "http://localhost:8080/resource/"; 
+    private String sameAsURI = "http://www.w3.org/2002/07/owl#sameAs";
 
     @Autowired
     private RestTemplate restTemplate;
@@ -189,7 +193,7 @@ public class MediaWikiApiService {
             }
         // Continuer tant qu'il y a des pages suivantes
         } while (apcontinue != null); 
-    
+        System.out.println(allPages.size());
         return allPages;
     }
 
@@ -201,15 +205,22 @@ public class MediaWikiApiService {
     public Model generateTriplesForAllPages() {
         List<String> allPages = getAllPages();
         Model model = ModelFactory.createDefaultModel();
-    
+        // Resource webPageResource = model.createResource("http://schema.org/WebPage");
+        // Resource thingResource = model.createResource("http://schema.org/Thing");
+        Property mainEntityOfPage = model.createProperty("http://schema.org/mainEntityOfPage");
+        // Property type = model.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+
+        Resource pageResource;
+        Resource entityResource;
+        
         for (String page : allPages) {
-            String pageURI = "http://example.org/page/" + encodeTitle(page); // URI pour la page
-            String resourceURI = "http://example.org/resource/" + encodeTitle(page); // URI pour l'entité
-    
-            Resource pageResource = model.createResource(pageURI);
-            Resource entityResource = model.createResource(resourceURI);
-    
-            model.add(pageResource, model.createProperty("http://www.w3.org/2002/07/owl#sameAs"), entityResource);
+            pageResource = model.createResource(API_ENDPOINT + "/" + encodeTitle(page));
+            entityResource = model.createResource(URI + "/" + encodeTitle(page));
+            
+            // model.add(pageResource, type, webPageResource);
+            // model.add(pageResource, type, thingResource);
+            model.add(entityResource, mainEntityOfPage, pageResource);
+
         }
     
         return model;

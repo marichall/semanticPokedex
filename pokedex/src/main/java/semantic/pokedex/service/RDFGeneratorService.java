@@ -16,7 +16,7 @@ import java.io.File;
 
 @Service
 public class RDFGeneratorService {
-    String exNS = "http://example.org/pokemon/";
+    String exNS = "http://localhost:8080/pokemon/";
     String schemaNS = "http://schema.org/";
 
     @Autowired
@@ -30,8 +30,6 @@ public class RDFGeneratorService {
      */
     public Model generateRdfForBulbasaur(Map<String, String> infoboxParams) {
         Model model = ModelFactory.createDefaultModel();
-
-        // Définition de préfix (pour l'instant ça n'a aucun sens)
         
         model.setNsPrefix("ex", exNS);
         model.setNsPrefix("schema", schemaNS);
@@ -82,9 +80,8 @@ public class RDFGeneratorService {
             // For simplicity, all values are literals. Enhance by defining proper types or linking to other resources.
             pokemonResource.addProperty(property, value);
         }
-        // String filePath = "InfoBox/" + encodeName(pokemonName) + ".ttl";
-        // Écriture du parsing de l'infobox dans un fichier ttl (pour l'instant)
-        rdfService.addModel(model); // Appel à une méthode pour ajouter le modèle dans Fuseki
+        // Add model in Fuseki
+        rdfService.addModel(model);
     }
 
     private String encodeName(String name) {
