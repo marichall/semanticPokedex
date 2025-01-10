@@ -19,6 +19,7 @@ import semantic.pokedex.service.PokemonListService;
 import semantic.pokedex.service.RDFGeneratorService;
 import semantic.pokedex.service.RDFService;
 import semantic.pokedex.service.TemplateData;
+import semantic.pokedex.service.TsvParserService;
 import semantic.pokedex.service.WikitextParserService;
 
 @RestController
@@ -41,6 +42,9 @@ public class RDFController {
 
     @Autowired
     private CategoryPageService categoryPageService;
+
+    @Autowired
+    private TsvParserService tsvParser;
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     public String addPokemon() {
@@ -157,5 +161,21 @@ public class RDFController {
         rdfService.addModel(model);
         return "Triples generated for all pages.";
     }
+
+
+    @GetMapping(value="/parsingTest")
+    public String parsingController() {
+        List<Map<String,String>> listOfParameters = null;
+        try {
+            listOfParameters = tsvParser.parseTsv("/home/hany/FAC/M2/S9/SemanticWeb/Projet/pokedex-i18n.tsv");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for(int i = 2; i< 12; i++){
+            System.err.println(listOfParameters.get(0));
+        }
+        return "";
+    }
+    
 
 }
