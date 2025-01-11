@@ -3,7 +3,6 @@ package semantic.pokedex.service;
 import java.util.*;
 
 import org.apache.jena.rdf.model.*;
-import org.checkerframework.checker.units.qual.s;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

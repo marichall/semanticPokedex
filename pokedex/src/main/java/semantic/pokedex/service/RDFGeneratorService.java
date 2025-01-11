@@ -20,7 +20,7 @@ public class RDFGeneratorService {
     String schemaNS = "http://schema.org/";
 
     @Autowired
-    private RDFService rdfService;
+    private FusekiService fusekiService;
 
     /**
      * Génère un modèle RDF depuis des paramètres dans l'infobox.
@@ -81,7 +81,7 @@ public class RDFGeneratorService {
             pokemonResource.addProperty(property, value);
         }
         // Add model in Fuseki
-        rdfService.addModel(model);
+        fusekiService.addModel(model);
     }
 
     private String encodeName(String name) {

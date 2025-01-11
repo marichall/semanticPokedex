@@ -17,7 +17,7 @@ import semantic.pokedex.service.CategoryPageService;
 import semantic.pokedex.service.MediaWikiApiService;
 import semantic.pokedex.service.PokemonListService;
 import semantic.pokedex.service.RDFGeneratorService;
-import semantic.pokedex.service.RDFService;
+import semantic.pokedex.service.FusekiService;
 import semantic.pokedex.service.TemplateData;
 import semantic.pokedex.service.TsvParserService;
 import semantic.pokedex.service.WikitextParserService;
@@ -26,7 +26,7 @@ import semantic.pokedex.service.WikitextParserService;
 public class RDFController {
 
     @Autowired
-    RDFService rdfService;
+    FusekiService fusekiService;
 
     @Autowired
     private WikitextParserService parserService;
@@ -48,7 +48,7 @@ public class RDFController {
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     public String addPokemon() {
-        rdfService.addData();
+        fusekiService.addBulbasaurData();
         return "D";
     }
 
@@ -92,22 +92,6 @@ public class RDFController {
         }
 
         return "RDF generation completed for " + count + " Pokémon.";
-    }
-
-    // Pas utilisé, à voir par la suite si on supprime
-    @GetMapping(value = "/generateRdfInfoboxTypes", produces = "text/plain")
-    public String generateRdfInfoboxTypes() {
-        List<String> infoboxTypes = categoryPageService.getInfoboxTypes();
-        if (infoboxTypes.isEmpty()) {
-            return "Failed to retrieve infobox types.";
-        }
-        int count = 0;
-        for (String infoboxType : infoboxTypes) {
-            System.out.println("Processing " + infoboxType);
-            generateRdfPokemonList(infoboxType);
-            count++;
-        }
-        return "RDF generation completed for " + count + " infobox types, for all pokemons.";
     }
 
     @GetMapping(value = "/generateAllInfoboxForAllPokemons", produces = "text/plain")
@@ -158,23 +142,25 @@ public class RDFController {
     @GetMapping(value = "/generateTriplesForAllPages", produces = "text/plain")
     public String generateTriplesForAllPages() {
         Model model = mediaWikiApiService.generateTriplesForAllPages();
-        rdfService.addModel(model);
+        fusekiService.addModel(model);
         return "Triples generated for all pages.";
     }
 
 
     @GetMapping(value="/parsingTest")
     public String parsingController() {
-        List<Map<String,String>> listOfParameters = null;
-        try {
-            listOfParameters = tsvParser.parseTsv("/home/hany/FAC/M2/S9/SemanticWeb/Projet/pokedex-i18n.tsv");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for(int i = 2; i< 12; i++){
-            System.err.println(listOfParameters.get(0));
-        }
-        return "";
+         try {
+             List<Map<String,String>> tsvData = tsvParser.parseTsv("/home/lea/Documents/M2/semanticWeb/project/semanticWeb/pokedex/Pokedex_i18n/pokedex-i18n.tsv");
+             List<Map<String,String>> pokemonData = tsvParser.filterPokemonData(tsvData, "pokemon");
+
+             Model model = tsvParser.generateRdfForPokemonInTsvFile(pokemonData);
+             fusekiService.addModel(model);
+             return "RDF generated for all Pokémon in the TSV file.";
+
+         } catch (IOException e) {
+             e.printStackTrace();
+             return "Error reading the TSV file.";
+         }
     }
     
 
