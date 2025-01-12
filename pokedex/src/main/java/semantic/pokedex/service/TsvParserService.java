@@ -13,10 +13,14 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
 import org.apache.jena.rdf.model.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TsvParserService {
+
+    @Autowired
+    RDFGeneratorService generatorService;
     /**
      * Parse un fichier TSV et retourne les données sous forme de liste.
      * Chaque ligne correspond à une entrée, et chaque colonne est une clé-valeur.
@@ -83,15 +87,30 @@ public class TsvParserService {
         return englishPokemonName;
     }
 
-    public Model generateRdfForPokemonInTsvFile(List<Map<String,String>> pokemonData) {
+    public Model generateRdfForPokemonInTsvFile(List<Map<String,String>> pokemonData, String templateType) {
         Model model = ModelFactory.createDefaultModel();
         Property name = model.createProperty("https://schema.org/name");
         Resource pokemonPage;
         Map<String,String> englishPokemonName = getEnglishPokemonName(pokemonData);
+        System.err.println("the page is " + englishPokemonName);
+        String uri = "http://localhost:8080/" + templateType + "/";
+        String typeId = "" ; 
+        String language = ""; 
+        String label = ""; 
         
         for (Map<String,String> pokemon : pokemonData) {
-            pokemonPage = model.createResource("http://localhost:8080/pokemon/" + englishPokemonName.get(pokemon.get("id")));
-            model.add(pokemonPage, name, model.createLiteral(pokemon.get("label"), pokemon.get("language").toLowerCase().substring(0, 2)));
+            typeId = pokemon.get("id");
+            language = pokemon.get("language").toLowerCase().substring(0, 2);
+            label = pokemon.get("label");
+            String englishName = englishPokemonName.get(typeId);
+            if(englishName != null){
+                System.err.println("english pokemonName is " + englishName + " and id is " + typeId +  " and language is " + language);
+                pokemonPage = model.createResource(uri + generatorService.encodeName(englishName));
+                model.add(pokemonPage, name, model.createLiteral(label, language));
+            }
+            else{
+                continue;
+            }
         }
         return model;
     }
