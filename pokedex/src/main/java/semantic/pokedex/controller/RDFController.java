@@ -1,7 +1,9 @@
 package semantic.pokedex.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -68,7 +70,7 @@ public class RDFController {
 
 
     @GetMapping(value = "/generateRdfPokemonList", produces = "text/plain")
-    public String generateRdfPokemonList(@RequestParam(required = false) String infoBoxType) {
+    public String generateRdfPokemonList(String infoBoxType) throws IOException {
         List<String> pokemonList = pokemonListService.getPokemonList();
         if (pokemonList.isEmpty()) {
             return "Failed to retrieve Pokémon list.";
@@ -82,7 +84,7 @@ public class RDFController {
             String templateType = (infoBoxType != null) ? infoBoxType : "Pokémon Infobox";
             Map<String, String> infoboxData = parserService.extractTemplateParameters(pokemonWikitext, templateType);
             if (infoboxData != null && !infoboxData.isEmpty()) {
-                rdfGeneratorService.generatePokemonInfoboxRdf(pokemonName, infoboxData);
+                rdfGeneratorService.generatePokemonInfoboxRdf(pokemonName, infoboxData, infoboxData.get("name"));
                 // System.err.println("RDF for " + pokemonName + " generated.");
             } else {
                 System.out.println("No infobox found for " + pokemonName + ".");
@@ -95,17 +97,26 @@ public class RDFController {
     }
 
     @GetMapping(value = "/generateAllInfoboxForAllPokemons", produces = "text/plain")
-    public String generateAllInfoboxForAllPokemons() {
+    public String generateAllInfoboxForAllPokemons() throws IOException {
         List<String> infoboxTypes = categoryPageService.getInfoboxTypes();
         if (infoboxTypes.isEmpty()) {
             return "Failed to retrieve infobox types.";
         }
         //Liste des infobox, pour pas toutes les faire
         List<String> infoBoxes = new ArrayList<String>() {{
-            add("BattleEInfobox");
-            add("Character Infobox");
-            add("MoveInfobox");
+            // add("AbilityInfobox/header");
+            // add("Infobox location");
+            // add("MoveInfobox");
+            add("Pokémon Infobox");
         }};
+        final Map<String, String> TEMPLATE_TO_PREFIX = new HashMap<>();
+
+        // Key = the exact template name from Bulbapedia
+        // Value = the short prefix used in your triple store
+        TEMPLATE_TO_PREFIX.put("Pokémon Infobox", "pokemon");
+        TEMPLATE_TO_PREFIX.put("Infobox location", "location");
+        TEMPLATE_TO_PREFIX.put("AbilityInfobox/header", "ability");
+        TEMPLATE_TO_PREFIX.put("MoveInfobox", "move");
         System.err.println(infoboxTypes);
 
         List<String> listOfPages = null;
@@ -124,19 +135,22 @@ public class RDFController {
             for(String page : listOfPages){
                 System.err.println("Treating page : " + page + "\n\n");
                 pageWikitext = mediaWikiApiService.getPageWikitext(page);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 templates = parserService.parseTemplates(pageWikitext);
                 infoBoxToParse = templates.stream().filter(t -> iterator.equalsIgnoreCase(t.getName())).collect(Collectors.toList());
                 page = page.replaceAll("[/:\\\\]", "_");
                 // 3eme boucle : Pour chaque page, on récupère les paramètre de l'infobox, et on parse.
                 for (TemplateData t : infoBoxToParse) {
                     params = t.getParams();
-                    rdfGeneratorService.generatePokemonInfoboxRdf(page, params);
+                    rdfGeneratorService.generatePokemonInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page); //here, the first argument gives us the type of template in order to correctly identify each resource
             }
         }
     }
-    // J'ai laissé cette variable dans le cas où on souhaiterait compter ou afficher un nombre d'infobox ou autre.
-    int countPokemon = 0;
-    return "RDF generation completed for " + countPokemon + " Pokémon.";
+    return "RDF generation completed ";
     }
 
     @GetMapping(value = "/generateTriplesForAllPages", produces = "text/plain")
@@ -147,20 +161,30 @@ public class RDFController {
     }
 
 
-    @GetMapping(value="/parsingTest")
+    @GetMapping(value="/parsingTest", produces = "text/plain")
     public String parsingController() {
-         try {
-             List<Map<String,String>> tsvData = tsvParser.parseTsv("/home/lea/Documents/M2/semanticWeb/project/semanticWeb/pokedex/Pokedex_i18n/pokedex-i18n.tsv");
-             List<Map<String,String>> pokemonData = tsvParser.filterPokemonData(tsvData, "pokemon");
+        List<String> ListOfTypes = new ArrayList<String>() {{
+            add("ability");
+            add("location");
+            add("move");
+            add("pokemon");
+        }};
 
-             Model model = tsvParser.generateRdfForPokemonInTsvFile(pokemonData);
-             fusekiService.addModel(model);
-             return "RDF generated for all Pokémon in the TSV file.";
+         try {
+             
+             List<Map<String,String>> tsvData = tsvParser.parseTsv("pokedex_i18n/pokedex-i18n.tsv");
+             for(String type : ListOfTypes){
+                 List<Map<String,String>> pokemonData = tsvParser.filterPokemonData(tsvData, type);
+                 Model model = tsvParser.generateRdfForPokemonInTsvFile(pokemonData, "ability");
+                 fusekiService.addModel(model);
+                 return "RDF generated for all Pokémon in the TSV file.";
+             }
 
          } catch (IOException e) {
              e.printStackTrace();
              return "Error reading the TSV file.";
          }
+         return "RDF generated for all Pokémon in the TSV file.";
     }
     
 
