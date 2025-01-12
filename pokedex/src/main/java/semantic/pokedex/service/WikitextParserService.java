@@ -47,7 +47,6 @@ public class WikitextParserService {
         }
 
         String templateContent = wikitext.substring(startIdx + templateStart.length(), endIdx).trim();
-        System.err.println("TEMPLATE CONTENT IN WIKITEXT PARSER SERVICE IS = " + templateContent);
         String[] lines = templateContent.split("\\|");
 
         for (String line : lines) {
@@ -63,7 +62,7 @@ public class WikitextParserService {
     }
 
     public List<TemplateData> parseTemplates(String wikitext) {
-        MyWikiModel model = new MyWikiModel("", "");
+        MyWikiModel model = new MyWikiModel("", "https://bulbapedia.bulbagarden.net/wiki/${title}");
         try {
             model.render(wikitext);
         } catch (IOException e) {
