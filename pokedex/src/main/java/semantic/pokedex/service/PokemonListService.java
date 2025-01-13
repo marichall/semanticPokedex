@@ -41,8 +41,8 @@ public class PokemonListService {
         return pokemonNames;
     }
 
-    public String getPokemonInfoBox(String pokemonName){
-        String pokemonWikitext = mediaWikiApiService.getPokemonPageWikitext(pokemonName);
-        return pokemonWikitext;
-    }
+    // public String getPokemonInfoBox(String pokemonName){
+    //     String pokemonWikitext = mediaWikiApiService.getPokemonPageWikitext(pokemonName);
+    //     return pokemonWikitext;
+    // }
 }

@@ -37,6 +37,22 @@ public class MediaWikiApiService {
         }
     }
 
+    public String getPageWikitext(String pageTitle, String prop) {
+        String url = API_ENDPOINT + "?action=parse&format=json&page=" + 
+                     encodeTitle(pageTitle) + prop;
+        System.out.println(url);
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        
+        try {
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(response.getBody());
+            return root.path("parse").path("wikitext").path("*").asText();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     public String getPokemonPageWikitext(String pokemonName) {
         String pageTitle = pokemonName + "_(Pokémon)";
@@ -203,10 +219,7 @@ public class MediaWikiApiService {
     public Model generateTriplesForAllPages() {
         List<String> allPages = getAllPages();
         Model model = ModelFactory.createDefaultModel();
-        // Resource webPageResource = model.createResource("http://schema.org/WebPage");
-        // Resource thingResource = model.createResource("http://schema.org/Thing");
         Property mainEntityOfPage = model.createProperty("http://schema.org/mainEntityOfPage");
-        // Property type = model.createProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
 
         Resource pageResource;
         Resource entityResource;
@@ -214,8 +227,6 @@ public class MediaWikiApiService {
         for (String page : allPages) {
             pageResource = model.createResource(bullbapediaWikiUrl + "/" + encodeTitle(page));
             entityResource = model.createResource(URI + "/" + encodeTitle(page));
-            // model.add(pageResource, type, webPageResource);
-            // model.add(pageResource, type, thingResource);
             model.add(entityResource, mainEntityOfPage, pageResource);
 
         }

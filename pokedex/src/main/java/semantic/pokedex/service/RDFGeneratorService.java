@@ -11,14 +11,9 @@ import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringWriter;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.io.File;
 
 @Service
 public class RDFGeneratorService {
@@ -116,15 +111,15 @@ public class RDFGeneratorService {
         return name.replace(" ", "_");
     }
 
-    private static String extractTextBetweenParentheses(String input) {
-        Pattern pattern = Pattern.compile("\\((.*?)\\)");
-        Matcher matcher = pattern.matcher(input);
-
-        // Vérifier si une correspondance est trouvée
-        if (matcher.find()) {
-            return matcher.group(1); // Retourne le contenu capturé
-        }
-
-        return null;
-    }
+    // private static String extractTextBetweenParentheses(String input) {
+    //     Pattern pattern = Pattern.compile("\\((.*?)\\)");
+    //     Matcher matcher = pattern.matcher(input);
+    // 
+    //     // Vérifier si une correspondance est trouvée
+    //     if (matcher.find()) {
+    //         return matcher.group(1); // Retourne le contenu capturé
+    //     }
+    // 
+    //     return null;
+    // }
 }

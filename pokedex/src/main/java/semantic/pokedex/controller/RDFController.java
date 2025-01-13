@@ -1,6 +1,5 @@
 package semantic.pokedex.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,7 +11,6 @@ import org.apache.jena.rdf.model.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import semantic.pokedex.service.CategoryPageService;
@@ -20,6 +18,7 @@ import semantic.pokedex.service.MediaWikiApiService;
 import semantic.pokedex.service.PokemonListService;
 import semantic.pokedex.service.RDFGeneratorService;
 import semantic.pokedex.service.FusekiService;
+import semantic.pokedex.service.FusekiToMediaWikiService;
 import semantic.pokedex.service.TemplateData;
 import semantic.pokedex.service.TsvParserService;
 import semantic.pokedex.service.WikitextParserService;
@@ -47,6 +46,9 @@ public class RDFController {
 
     @Autowired
     private TsvParserService tsvParser;
+
+    @Autowired
+    private FusekiToMediaWikiService fusekiToMediaWikiService;
 
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     public String addPokemon() {
@@ -79,13 +81,12 @@ public class RDFController {
         String pokemonWikitext = "";
         for (String pokemonName : pokemonList) {
 
-            System.out.println("Processing " + pokemonName);
+            // System.out.println("Processing " + pokemonName);
             pokemonWikitext = mediaWikiApiService.getPokemonPageWikitext(pokemonName);
             String templateType = (infoBoxType != null) ? infoBoxType : "Pokémon Infobox";
             Map<String, String> infoboxData = parserService.extractTemplateParameters(pokemonWikitext, templateType);
             if (infoboxData != null && !infoboxData.isEmpty()) {
                 rdfGeneratorService.generatePokemonInfoboxRdf(pokemonName, infoboxData, infoboxData.get("name"));
-                // System.err.println("RDF for " + pokemonName + " generated.");
             } else {
                 System.out.println("No infobox found for " + pokemonName + ".");
             }
@@ -128,12 +129,14 @@ public class RDFController {
         for(String iterator : infoBoxes){
             // Ici, on récupère la liste des pages qui utilisent cette infobox
             listOfPages = mediaWikiApiService.getPagesUsingTemplate(iterator);
-            System.err.println("Treating category : " + iterator + "\n\n");
-            System.err.println("SIZE OF LIST OF PAGES " + listOfPages.size() + "\n\n");
-            System.err.println("PAGES \n\n" + listOfPages + "\n\n");
+
+            // System.err.println("Treating category : " + iterator + "\n\n");
+            // System.err.println("SIZE OF LIST OF PAGES " + listOfPages.size() + "\n\n");
+            // System.err.println("PAGES \n\n" + listOfPages + "\n\n");
+
             // 2eme boucle :  boucle sur la liste des pages.
             for(String page : listOfPages){
-                System.err.println("Treating page : " + page + "\n\n");
+                // System.err.println("Treating page : " + page + "\n\n");
                 pageWikitext = mediaWikiApiService.getPageWikitext(page);
                 try {
                     Thread.sleep(500);
@@ -161,7 +164,7 @@ public class RDFController {
     }
 
 
-    @GetMapping(value="/parsingTest", produces = "text/plain")
+    @GetMapping(value="/generateTriplesWithTsvFile", produces = "text/plain")
     public String parsingController() {
         List<String> ListOfTypes = new ArrayList<String>() {{
             add("ability");
@@ -186,6 +189,11 @@ public class RDFController {
          }
          return "RDF generated for all Pokémon in the TSV file.";
     }
-    
+
+    @GetMapping(value = "/processMediaWikiInfobox", produces = "text/plain")
+    public String processMediaWikiInfobox() throws IOException {
+        fusekiToMediaWikiService.processMediaWikiInfobox();
+        return "MediaWiki infobox processing completed.";
+    }
 
 }
