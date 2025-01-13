@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 public class MediaWikiApiService {
 
     private static final String API_ENDPOINT = "https://bulbapedia.bulbagarden.net/w/api.php";
-    private static final String URI = "http://localhost:8080"; 
+    public final String URI = "http://localhost:8080"; 
     private String bullbapediaWikiUrl = "https://bulbapedia.bulbagarden.net/wiki"; 
 
     @Autowired
@@ -40,7 +40,6 @@ public class MediaWikiApiService {
     public String getPageWikitext(String pageTitle, String prop) {
         String url = API_ENDPOINT + "?action=parse&format=json&page=" + 
                      encodeTitle(pageTitle) + prop;
-        System.out.println(url);
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         
         try {
@@ -235,7 +234,7 @@ public class MediaWikiApiService {
     }    
        
 
-    private String encodeTitle(String title) {
+    public String encodeTitle(String title) {
         return title.replace(" ", "_");
     }
 }

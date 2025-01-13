@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.jena.query.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +26,10 @@ public class FusekiToMediaWikiService {
     @Autowired
     private RDFGeneratorService rdfGeneratorService;
 
-    public void processMediaWikiInfobox() throws IOException {
+    public void extractInfoboxFromMediaWiki() throws IOException {
         String predicate = "http://schema.org/mainEntityOfPage";
-        String templateType = "";
 
-        // Étape 1 : Récupérer les pages depuis Fuseki
+        // Pages existantes récupérées depuis le triplestore
         String sparqlQuery = String.format(
             "SELECT ?url WHERE { ?s <%s> ?url }", predicate
         );
@@ -36,52 +37,49 @@ public class FusekiToMediaWikiService {
         List<String> pagesUrl = new ArrayList<>();
         Map<String, String> infoboxData;
 
+        // Stockage de nos Urls dans une liste
         while (results.hasNext()) {
             QuerySolution solution = results.nextSolution();
             String url = solution.get("url").toString();
             pagesUrl.add(url);
         }
 
+        // Extraction des infoboxes souhaitées
         for (String pageUrl : pagesUrl) {
-            System.out.println("Processing page: " + pageUrl);
             String pageTitle = pageUrl.substring(pageUrl.lastIndexOf("/") + 1);
 
-            System.out.println("Processing page: " + pageTitle);
-
-            // Étape 2 : Appeler l'API MediaWiki pour récupérer le wikitext
             String wikitext = mediaWikiApiService.getPageWikitext(pageTitle, "&prop=wikitext|templates|images|links");
             infoboxData = null;
             if(wikitext.contains("{{Pokémon Infobox")) {
-                templateType = "Pokémon Infobox";
-                System.out.println("111111111111111111111");
-                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, templateType);
+                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "Pokémon Infobox");
 
             }else if(wikitext.contains("{{RegionInfobox")) {
-                templateType = "RegionInfobox";
-                System.out.println("222222222222222222222");
-                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, templateType);
+                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "RegionInfobox");
 
             }
             else if(wikitext.contains("{{AbilityInfobox")) {
-                templateType = "AbilityInfobox";
-                System.out.println("333333333333333333333");
-                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, templateType);
+                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "AbilityInfobox");
 
             }
             else if(wikitext.contains("{{MoveInfobox")) {
-                templateType = "MoveInfobox";
-                System.out.println("444444444444444444444");
-                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, templateType);
+                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "MoveInfobox");
 
             } 
                 
-            
-
-            System.out.println("infoboxData =" + infoboxData);
+            // Génération du RDF
             if (infoboxData != null && !infoboxData.isEmpty()) {
-                String pokemonName = infoboxData.get("name");
-                
-                rdfGeneratorService.generatePokemonInfoboxRdf(pageTitle, infoboxData, pageTitle);
+                String pageName = mediaWikiApiService.encodeTitle(pageTitle);
+                String regex = "^(.*?)_\\((.*?)\\)$";
+
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(pageName);
+
+                if (matcher.matches()) {
+                    String valueType = matcher.group(1); 
+                    String type = matcher.group(2);
+                                     
+                    rdfGeneratorService.generateInfoboxRdf(type, infoboxData, valueType);
+                }
             }
         }
     }

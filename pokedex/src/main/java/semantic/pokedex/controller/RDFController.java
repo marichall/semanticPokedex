@@ -86,7 +86,7 @@ public class RDFController {
             String templateType = (infoBoxType != null) ? infoBoxType : "Pokémon Infobox";
             Map<String, String> infoboxData = parserService.extractTemplateParameters(pokemonWikitext, templateType);
             if (infoboxData != null && !infoboxData.isEmpty()) {
-                rdfGeneratorService.generatePokemonInfoboxRdf(pokemonName, infoboxData, infoboxData.get("name"));
+                rdfGeneratorService.generateInfoboxRdf("pokemon", infoboxData, infoboxData.get("name"));
             } else {
                 System.out.println("No infobox found for " + pokemonName + ".");
             }
@@ -149,7 +149,7 @@ public class RDFController {
                 // 3eme boucle : Pour chaque page, on récupère les paramètre de l'infobox, et on parse.
                 for (TemplateData t : infoBoxToParse) {
                     params = t.getParams();
-                    rdfGeneratorService.generatePokemonInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page); //here, the first argument gives us the type of template in order to correctly identify each resource
+                    rdfGeneratorService.generateInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page); //here, the first argument gives us the type of template in order to correctly identify each resource
             }
         }
     }
@@ -190,9 +190,9 @@ public class RDFController {
          return "RDF generated for all Pokémon in the TSV file.";
     }
 
-    @GetMapping(value = "/processMediaWikiInfobox", produces = "text/plain")
+    @GetMapping(value = "/extractInfoboxFromMediaWiki", produces = "text/plain")
     public String processMediaWikiInfobox() throws IOException {
-        fusekiToMediaWikiService.processMediaWikiInfobox();
+        fusekiToMediaWikiService.extractInfoboxFromMediaWiki();
         return "MediaWiki infobox processing completed.";
     }
 

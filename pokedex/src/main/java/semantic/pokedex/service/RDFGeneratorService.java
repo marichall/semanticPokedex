@@ -66,14 +66,13 @@ public class RDFGeneratorService {
     }
 
 
-    public void generatePokemonInfoboxRdf(String pokemonName, Map<String, String> infoboxData, String pageName) throws IOException {
+    public void generateInfoboxRdf(String prefix, Map<String, String> infoboxData, String pageName) throws IOException {
         MyWikiModel wikiModel = new MyWikiModel(
         "", 
         "https://bulbapedia.bulbagarden.net/wiki/${title}"
         );
 
         Model model = ModelFactory.createDefaultModel();
-        String prefix = pokemonName;
         String namespace = exNS + prefix + "/"; 
         model.setNsPrefix(prefix, namespace);
         model.setNsPrefix("rdf", RDF.getURI());
@@ -84,26 +83,21 @@ public class RDFGeneratorService {
             String key = entry.getKey().replace(" ", "_").toLowerCase();
             String rawValue = entry.getValue();  // ex: "West of [[:Template:rt]]"
     
-            // 1) Rendu HTML de la valeur brute (avec votre linkBaseURL)
             String renderedHtml = wikiModel.render(rawValue);
-    
-            // 2) Parser en DOM HTML
             Document doc = Jsoup.parse(renderedHtml);
     
-            // 3) Pour chaque <a>, remplace le texte par son href
             for (Element a : doc.select("a")) {
                 String href = a.attr("href"); 
                 a.text(href);  // Ex: "https://bulbapedia.bulbagarden.net/wiki/Template:gen"
             }
     
-            // 4) Récupérer le texte du DOM, qui contient désormais les URLs
             String replacedText = doc.text();
     
-            // 5) Stocker dans le triple RDF (en littéral, ici)
             Property property = model.createProperty(exNS, key);
             pokemonResource.addProperty(property, replacedText);
         }
-        // Add model in Fuseki
+        // System.out.println("RDF généré pour : " + prefix + " : " + pokemonResource);
+        // Ajout du model sur fuseki
         fusekiService.addModel(model);
     }
 
