@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.jena.base.Sys;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -21,13 +19,8 @@ public class TsvParserService {
 
     @Autowired
     RDFGeneratorService generatorService;
-    /**
-     * Parse un fichier TSV et retourne les données sous forme de liste.
-     * Chaque ligne correspond à une entrée, et chaque colonne est une clé-valeur.
-     *
-     * @param filePath Chemin vers le fichier TSV
-     * @return Liste de mappages représentant les données du fichier
-     */
+    
+    // Parse a TSV file and return the data as a list.
     public List<Map<String, String>> parseTsv(String filePath) throws IOException {
         List<Map<String, String>> data = new ArrayList<>();
 
@@ -59,12 +52,7 @@ public class TsvParserService {
         return data;
     }
 
-    // public List<String> getAllParameters(String templateType){
-    //     List<String> allParam = null;
-    //     
-    //     return allParam;
-    // }
-
+    // Filter the data by type.
     public List<Map<String,String>> filterPokemonData(List<Map<String, String>> tsvData, String type) {
         List<Map<String,String>> finalData = new ArrayList<>();
         for(int i=0; i<tsvData.size(); i++){
@@ -77,6 +65,7 @@ public class TsvParserService {
         return finalData;
     }
 
+    // Get the English name of each Pokémon.
     public Map<String, String> getEnglishPokemonName(List<Map<String, String>> pokemonData) {
         Map<String, String> englishPokemonName = new HashMap<>();
         for (Map<String, String> row : pokemonData) {
@@ -87,6 +76,7 @@ public class TsvParserService {
         return englishPokemonName;
     }
 
+    // Generate RDF data for each Pokémon in the TSV file.
     public Model generateRdfForPokemonInTsvFile(List<Map<String,String>> pokemonData, String templateType) {
         Model model = ModelFactory.createDefaultModel();
         Property name = model.createProperty("https://schema.org/name");

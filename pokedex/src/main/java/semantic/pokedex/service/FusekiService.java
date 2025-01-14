@@ -17,6 +17,7 @@ public class FusekiService {
 
     public void addModel(Model model) {
         try {
+            // add the content of model to the triplestore
             conn.load(model);
         } catch (Exception e) {
             e.printStackTrace();
@@ -25,14 +26,15 @@ public class FusekiService {
 
     public void addBulbasaurData() {
         addModel(ModelFactory.createDefaultModel());
-        conn.update("INSERT DATA { <Bulbasaur> a <Pokemon> }"); // add the triple to the triplestore
+        // add the triple to the triplestore
+        conn.update("INSERT DATA { <Bulbasaur> a <Pokemon> }");
     }
 
     public void addData(String subject, String object) {
         Model model = ModelFactory.createDefaultModel();
 
-        conn.load(model); // add the content of model to the triplestore
-        conn.update("INSERT DATA { < " + subject + "> a <" + object + "> }"); // add the triple to the triplestore
+        conn.load(model); 
+        conn.update("INSERT DATA { < " + subject + "> a <" + object + "> }");
     }
 
     public org.apache.jena.query.ResultSet executeSelectQuery(String sparqlQuery) {

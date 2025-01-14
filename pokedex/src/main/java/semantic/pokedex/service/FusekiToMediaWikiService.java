@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.jena.query.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class FusekiToMediaWikiService {
     public void extractInfoboxFromMediaWiki() throws IOException {
         String predicate = "http://schema.org/mainEntityOfPage";
 
-        // Pages existantes récupérées depuis le triplestore
+        // Retrieve the URLs of the pages that have our predicate
         String sparqlQuery = String.format(
             "SELECT ?url WHERE { ?s <%s> ?url }", predicate
         );
@@ -37,14 +36,14 @@ public class FusekiToMediaWikiService {
         List<String> pagesUrl = new ArrayList<>();
         Map<String, String> infoboxData;
 
-        // Stockage de nos Urls dans une liste
+        // Storing our URLs in a list
         while (results.hasNext()) {
             QuerySolution solution = results.nextSolution();
             String url = solution.get("url").toString();
             pagesUrl.add(url);
         }
 
-        // Extraction des infoboxes souhaitées
+        // Extraction of the desired infoboxes
         for (String pageUrl : pagesUrl) {
             String pageTitle = pageUrl.substring(pageUrl.lastIndexOf("/") + 1);
 
@@ -66,7 +65,7 @@ public class FusekiToMediaWikiService {
 
             } 
                 
-            // Génération du RDF
+            // RDF generation
             if (infoboxData != null && !infoboxData.isEmpty()) {
                 String pageName = mediaWikiApiService.encodeTitle(pageTitle);
                 String regex = "^(.*?)_\\((.*?)\\)$";

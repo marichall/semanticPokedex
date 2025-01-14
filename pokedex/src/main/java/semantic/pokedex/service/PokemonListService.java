@@ -2,7 +2,6 @@ package semantic.pokedex.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -14,11 +13,7 @@ public class PokemonListService {
     @Autowired
     private MediaWikiApiService mediaWikiApiService;
 
-    /**
-     * Récupère la liste des noms des pokémons à l'aide de l'API.
-     *
-     * @return Liste des noms des Pokémon.
-     */
+    // Get pokemon list with the API
     public List<String> getPokemonList() {
         String pageTitle = "List_of_Pokémon_by_Kanto_Pokédex_number";
         String wikitext = mediaWikiApiService.getPageWikitext(pageTitle);
@@ -26,7 +21,7 @@ public class PokemonListService {
             return new ArrayList<>();
         }
 
-        // Expression régulière pour récupérer les info dans l'infobox
+        // Regular expression to get the info in the infobox
         String regex = "\\{\\{rdex\\|[^|]*\\|[^|]*\\|([^|]+)\\|";
         Pattern pattern = Pattern.compile(regex);
 

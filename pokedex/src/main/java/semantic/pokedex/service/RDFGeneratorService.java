@@ -10,7 +10,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
@@ -23,12 +22,8 @@ public class RDFGeneratorService {
     @Autowired
     private FusekiService fusekiService;
 
-    /**
-     * Génère un modèle RDF depuis des paramètres dans l'infobox.
-     *
-     * @param infoboxParams Une map des propriétés contenues dans l'infobox.
-     * @return Modèle Jena Model représentant le graphe RDF.
-     */
+    
+    // Generates an RDF model from infobox parameters.
     public Model generateRdfForBulbasaur(Map<String, String> infoboxParams) {
         Model model = ModelFactory.createDefaultModel();
         
@@ -53,19 +48,14 @@ public class RDFGeneratorService {
         return model;
     }
 
-    /**
-     * Sérialise le modèle RDF en XML.
-     *
-     * @param model Modèle Jena.
-     * @return Représentation en XML.
-     */
+    // Serialize RDF model to XML
     public String serializeRDF(Model model) {
         StringWriter out = new StringWriter();
         model.write(out, "RDF/XML");
         return out.toString();
     }
 
-
+    // Generate RDF for a Pokemon and add it to the Fuseki dataset
     public void generateInfoboxRdf(String prefix, Map<String, String> infoboxData, String pageName) throws IOException {
         MyWikiModel wikiModel = new MyWikiModel(
         "", 
@@ -78,17 +68,16 @@ public class RDFGeneratorService {
         model.setNsPrefix("rdf", RDF.getURI());
 
         Resource pokemonResource = model.createResource(namespace + encodeName(pageName));
-        // Boucle sur l'info box et les propriétés
         for (Map.Entry<String, String> entry : infoboxData.entrySet()) {
             String key = entry.getKey().replace(" ", "_").toLowerCase();
-            String rawValue = entry.getValue();  // ex: "West of [[:Template:rt]]"
+            String rawValue = entry.getValue(); 
     
             String renderedHtml = wikiModel.render(rawValue);
             Document doc = Jsoup.parse(renderedHtml);
     
             for (Element a : doc.select("a")) {
                 String href = a.attr("href"); 
-                a.text(href);  // Ex: "https://bulbapedia.bulbagarden.net/wiki/Template:gen"
+                a.text(href); 
             }
     
             String replacedText = doc.text();
@@ -97,7 +86,7 @@ public class RDFGeneratorService {
             pokemonResource.addProperty(property, replacedText);
         }
         // System.out.println("RDF généré pour : " + prefix + " : " + pokemonResource);
-        // Ajout du model sur fuseki
+        // Add model to Fuseki
         fusekiService.addModel(model);
     }
 

@@ -53,7 +53,7 @@ public class RDFController {
     @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     public String addPokemon() {
         fusekiService.addBulbasaurData();
-        return "D";
+        return "Added Bulbasaur data to Fuseki.";
     }
 
     @GetMapping(value = "/generateRdfBulbasaur", produces = "application/rdf+xml")
@@ -81,7 +81,6 @@ public class RDFController {
         String pokemonWikitext = "";
         for (String pokemonName : pokemonList) {
 
-            // System.out.println("Processing " + pokemonName);
             pokemonWikitext = mediaWikiApiService.getPokemonPageWikitext(pokemonName);
             String templateType = (infoBoxType != null) ? infoBoxType : "Pokémon Infobox";
             Map<String, String> infoboxData = parserService.extractTemplateParameters(pokemonWikitext, templateType);
@@ -103,7 +102,7 @@ public class RDFController {
         if (infoboxTypes.isEmpty()) {
             return "Failed to retrieve infobox types.";
         }
-        //Liste des infobox, pour pas toutes les faire
+        // List of infoboxes to process, not all
         List<String> infoBoxes = new ArrayList<String>() {{
             // add("AbilityInfobox/header");
             // add("Infobox location");
@@ -125,18 +124,11 @@ public class RDFController {
         List<TemplateData> templates = null; 
         List<TemplateData> infoBoxToParse = null;
         Map<String, String> params = null;
-        // Première boucle : boucle sur la liste des infobox
         for(String iterator : infoBoxes){
-            // Ici, on récupère la liste des pages qui utilisent cette infobox
+            // Here, we get the list of pages that use this infobox
             listOfPages = mediaWikiApiService.getPagesUsingTemplate(iterator);
 
-            // System.err.println("Treating category : " + iterator + "\n\n");
-            // System.err.println("SIZE OF LIST OF PAGES " + listOfPages.size() + "\n\n");
-            // System.err.println("PAGES \n\n" + listOfPages + "\n\n");
-
-            // 2eme boucle :  boucle sur la liste des pages.
             for(String page : listOfPages){
-                // System.err.println("Treating page : " + page + "\n\n");
                 pageWikitext = mediaWikiApiService.getPageWikitext(page);
                 try {
                     Thread.sleep(500);
@@ -146,10 +138,12 @@ public class RDFController {
                 templates = parserService.parseTemplates(pageWikitext);
                 infoBoxToParse = templates.stream().filter(t -> iterator.equalsIgnoreCase(t.getName())).collect(Collectors.toList());
                 page = page.replaceAll("[/:\\\\]", "_");
-                // 3eme boucle : Pour chaque page, on récupère les paramètre de l'infobox, et on parse.
+
+                // create the rdf for each infobox
                 for (TemplateData t : infoBoxToParse) {
                     params = t.getParams();
-                    rdfGeneratorService.generateInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page); //here, the first argument gives us the type of template in order to correctly identify each resource
+                    // Here, the first argument gives us the type of template in order to correctly identify each resource
+                    rdfGeneratorService.generateInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page); 
             }
         }
     }

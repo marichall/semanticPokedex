@@ -1,8 +1,6 @@
 package semantic.pokedex.service;
 
 import org.springframework.stereotype.Service;
-
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -13,25 +11,13 @@ import java.util.Map;
 @Service
 public class WikitextParserService {
 
-    /**
-     * Parses the wikitext infobox and extracts key-value pairs.
-     *
-     * @param filePath Chemin vers le fichier wikitext.
-     * @return Map of infobox properties.
-     * @throws IOException Si la lecture du fichier échoue.
-     */
+    // Parses the wikitext infobox and extracts key-value pairs.
     public Map<String, String> parseInfobox(String filePath, String InfoBoxType) throws IOException {
         String wikitext = new String(Files.readAllBytes(Paths.get(filePath)));
         return extractTemplateParameters(wikitext, InfoBoxType);
     }
 
-    /**
-     * Extracts parameters from a specified template in the wikitext.
-     *
-     * @param wikitext    The complete wikitext content.
-     * @param templateName The name of the template to extract.
-     * @return Map of parameter names and their values.
-     */
+    // Extracts parameters from a specified template in the wikitext.
     public Map<String, String> extractTemplateParameters(String wikitext, String templateName) {
         Map<String, String> params = new HashMap<>();
 
@@ -61,6 +47,7 @@ public class WikitextParserService {
         return params;
     }
 
+    // Parses the wikitext and extracts all templates.
     public List<TemplateData> parseTemplates(String wikitext) {
         MyWikiModel model = new MyWikiModel("", "https://bulbapedia.bulbagarden.net/wiki/${title}");
         try {

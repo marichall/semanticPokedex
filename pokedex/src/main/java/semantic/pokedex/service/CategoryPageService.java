@@ -2,10 +2,7 @@ package semantic.pokedex.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +14,9 @@ public class CategoryPageService {
     private MediaWikiApiService mediaWikiApiService;
 
     /**
-     * Récupère la liste des types d'infobox à partir de la catégorie "Category:Infobox templates".
+     * Get the list of infobox types from the category "Category:Infobox templates".
      *
-     * @return Liste des types d'infobox.
+     * @return List of infobox types.
      */
     public List<String> getInfoboxTypes() {
 

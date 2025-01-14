@@ -1,7 +1,6 @@
 package semantic.pokedex.service;
 
 import java.util.*;
-
 import org.apache.jena.rdf.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,15 +17,15 @@ public class MediaWikiApiService {
     @Autowired
     private RestTemplate restTemplate;
 
+    // Get the wikitext of a page
     public String getPageWikitext(String pageTitle) {
         String url = API_ENDPOINT + "?action=parse&format=json&page=" + 
                      encodeTitle(pageTitle) + "&prop=wikitext";
 
         ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
         
-        // Traitement de la réponse de l'API
-        // La réponse est en JSON, on utilise Jackson ObjectMapper pour lire la réponse
-
+        // Processing the API response
+        // The response is in JSON, we use Jackson ObjectMapper to read the response
         try {
             com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
             com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(response.getBody());
@@ -37,6 +36,7 @@ public class MediaWikiApiService {
         }
     }
 
+    // Same as getPageWikitext but with a prop parameter
     public String getPageWikitext(String pageTitle, String prop) {
         String url = API_ENDPOINT + "?action=parse&format=json&page=" + 
                      encodeTitle(pageTitle) + prop;
@@ -52,12 +52,13 @@ public class MediaWikiApiService {
         }
     }
 
-
+    // Get the wikitext of a pokemon page
     public String getPokemonPageWikitext(String pokemonName) {
         String pageTitle = pokemonName + "_(Pokémon)";
         return getPageWikitext(pageTitle);
     }
 
+    // get pages with a category name
     public List<String> getPagesInCategory(String category) {
         String url = API_ENDPOINT + "?action=query&list=categorymembers&cmtitle=" 
                         + category + "&cmlimit=max&format=json";
@@ -85,14 +86,7 @@ public class MediaWikiApiService {
         }
     }
 
-     /**
-     * Méthode helper utilisée pour gérer la pagination des résultats de l'API MediaWiki.
-     * Elle récupère les pages suivantes utilisant le template spécifié en utilisant le token de continuation.
-     *
-     * @param templateName Le nom du template dont on veut trouver les pages qui l'utilisent.
-     * @param eicontinue   Le token de continuation fourni par l'API MediaWiki pour récupérer la prochaine série de résultats.
-     * @return Une liste de titres de pages utilisant le template spécifié.
-     */
+    // Get all pages with template name and continue param (recursive function)
     private List<String> getPagesUsingTemplateWithContinue(String templateName, String eicontinue) {
         String url = API_ENDPOINT + "?action=query&list=backlinks&bltitle=Template:" 
                      + encodeTitle(templateName) + "&eilimit=max&eicontinue=" 
@@ -113,7 +107,7 @@ public class MediaWikiApiService {
                 }
             }
 
-            // Récupérer la suite si nécessaire
+            // Get the next page if exist
             com.fasterxml.jackson.databind.JsonNode cont = root.path("continue").path("eicontinue");
             if (!cont.isMissingNode()) {
                 pages.addAll(getPagesUsingTemplateWithContinue(templateName, cont.asText()));
@@ -126,12 +120,7 @@ public class MediaWikiApiService {
         }
     }
 
-     /**
-     * Récupère toutes les pages qui utilisent un template spécifique en gérant la pagination via des tokens de continuation.
-     *
-     * @param templateName Le nom du template dont on veut trouver les pages utilisant.
-     * @return Une liste de titres de pages utilisant le template spécifié.
-     */
+    // Get all pages using a template
     public List<String> getPagesUsingTemplate(String templateName) {
         String url = API_ENDPOINT + "?action=query&list=embeddedin&eititle=Template:"
                                 + encodeTitle(templateName) + "&eilimit=max&format=json";
@@ -150,8 +139,7 @@ public class MediaWikiApiService {
                     pages.add(title);
                 }
             }
-
-            // On gère la pagination s'il y en a
+            // Get the next page if exist
             com.fasterxml.jackson.databind.JsonNode cont = root.path("continue").path("eicontinue");
             if (!cont.isMissingNode()) {
                 pages.addAll(getPagesUsingTemplateWithContinue(templateName, cont.asText()));
@@ -164,31 +152,27 @@ public class MediaWikiApiService {
         }
     }
 
-    /**
-     * Récupère toutes les pages du wiki
-     * 
-     * @return Une liste de toutes les pages trouvés
-     */
+    // get all wiki pages
     public List<String> getAllPages() {
         List<String> allPages = new ArrayList<>();
         String apcontinue = null;
     
         do {
-            // Construire l'URL avec le paramètre de pagination si nécessaire
+            // Construct the URL with the pagination parameter if necessary
             String url = API_ENDPOINT + "?action=query&list=allpages&aplimit=max&format=json";
             if (apcontinue != null) {
                 url += "&apcontinue=" + apcontinue;
             }
     
-            // Appeler l'API pour obtenir les pages
+            // Call the API to get the pages
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
     
             try {
-                // Lire la réponse JSON
+                // Read the JSON response
                 com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
                 com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(response.getBody());
     
-                // Extraire les pages de la réponse
+                // Extract the pages from the response
                 com.fasterxml.jackson.databind.JsonNode pages = root.path("query").path("allpages");
                 if (!pages.isMissingNode()) {
                     for (com.fasterxml.jackson.databind.JsonNode page : pages) {
@@ -196,25 +180,20 @@ public class MediaWikiApiService {
                         allPages.add(title);
                     }
                 }
-    
-                // Gerer la pagination s'il y en a
+                // Get the next page if exist
                 com.fasterxml.jackson.databind.JsonNode cont = root.path("continue").path("apcontinue");
                 apcontinue = cont.isMissingNode() ? null : cont.asText();
             } catch (Exception e) {
                 e.printStackTrace();
                 break;
             }
-        // Continuer tant qu'il y a des pages suivantes
+        // Continue as long as there are more pages
         } while (apcontinue != null); 
         System.out.println(allPages.size());
         return allPages;
     }
 
-    /**
-     * Génère des triplets pour toutes les pages du wiki
-     * 
-     * @return Un model RDF contenant les triplets de toutes les pages
-     */
+    // Generate triples for all wiki pages
     public Model generateTriplesForAllPages() {
         List<String> allPages = getAllPages();
         Model model = ModelFactory.createDefaultModel();
