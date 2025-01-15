@@ -11,31 +11,29 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Class personnalisée qui étend WikiModel de Bliki pour intercepter et collecter les templates.
- * Permet d'extraire les informations des templates présents dans le wikitext.
+ * Custom class extending Bliki's WikiModel to intercept and collect templates.
+ * Enables the extraction of information from templates present in the wikitext.
  */
 public class MyWikiModel extends WikiModel {
 
-    // On garde ici tous les templates rencontrés
+    // This variable will contain all the encoutered tamplates
     public final List<TemplateData> templates = new ArrayList<>();
 
     public MyWikiModel(String imageBaseURL, String linkBaseURL) {
         super(imageBaseURL, linkBaseURL);
     }
-
     /**
-     * Override de la méthode correspondant à la doc :
+     * Override of the method as described in the documentation:
      * public void substituteTemplateCall(String templateName,
-     *                                    Map<String,String> parameterMap,
+     *                                    Map<String, String> parameterMap,
      *                                    Appendable writer)
      *     throws IOException
      */
-    // Cette méthode n'est pas utilisée (On en aura peut-être besoin plus tard, à voir.)
     @Override
     public void substituteTemplateCall(String templateName,
                                        Map<String, String> parameterMap,
                                        Appendable writer) throws IOException {
-        //Stockage de la template dans la liste
+        // Storing the template in the list
         TemplateData data = new TemplateData(templateName, parameterMap);
         templates.add(data);
 
@@ -51,48 +49,48 @@ public void appendInternalLink(
     boolean parseRecursive,
     boolean topicExists
 ) {
-    // S’il s’agit d’un lien de type "Template:..."
+    // If it's a template of type "Template:..."
     if (topic.startsWith("Template:")) {
-        // Construis l’URL qui pointe vers, par ex., Bulbapedia
+        // Creating a URL that points towards for ex., Bulbapedia
         String templateUrl = getWikiBaseURL().replace("${title}", topic);
         
-        // Crée un tag HTML <a> (implémenté par Bliki dans WPATag)
+        // Creating a tag of type HTML <a> (implemented by Bliki in WPATag)
         WPATag aTagNode = new WPATag();
-        // On peut définir l’attribut "href"
+        // We can define the attribute "href"
         aTagNode.addAttribute("href", templateUrl, true);
 
-        // Ajout d'un titre, si besoin
+        // Addind a title in case it's needed
         aTagNode.addAttribute("title", topic, true);
 
-        // Cas où on souhaiterait utiliser la classe CSS
+        // Case where we would like to use a css class
         if (cssClass != null) {
             aTagNode.addAttribute("class", cssClass, true);
         }
 
-        // Empile le tag dans la stack de Bliki
+        // Stacking the tag in Bliki's stack
         pushNode(aTagNode);
         
-        // Ajout du texte du lien (soit `topicDescription`, soit le topic)
+        // Adding the text from the link (either `topicDescription`, or the topic)
         String description = (topicDescription != null) 
                                ? topicDescription.trim() 
                                : topic;
         
         if (parseRecursive) {
-            // Au besoin, ré-analyse la description comme du wiki
+            // In case it's needed, making a recursive call to re analyse the description if it's an internal link
             WikipediaPreTagParser.parseRecursive(description, this, false, true);
         } else {
-            // Sinon, on ajoute juste du texte brut
+            // Otherwise, it's just a normal text
             aTagNode.addChild(new ContentToken(description));
         }
 
-        // Et on ferme le tag ici
+        // Closing the tag
         popNode();
 
-        // On return pour ne pas appeler la logique par défaut
+        
         return;
 
     } else {
-        // Sinon, on laisse faire le comportement standard de Bliki
+        // Otherwise, we keep the default treatement of the method from bliki
         super.appendInternalLink(
             topic, 
             hashSection, 
