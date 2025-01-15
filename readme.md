@@ -1,18 +1,20 @@
-# Semantic web project : Bullbapedia knowledge graph
-## This project has been done by second year master's student from DSC :
-    - BAYAZID Hany
-    - MARICHAL-ROSIERE Léa
+# Semantic Web Project: Bulbapedia Knowledge Graph
 
-## Project technologies
-    - This project has been coded in Java, and with the usage of SpringBoot.
-    - The project uses JAVA 21.
-    - Apache Jean was used to create RDF triples and to add the data to Fuseki.
-    - The framework Bliki, was used in order to parse the different infoboxes.
+## Overview
+This project, completed by second-year master's students from DSC:
+- BAYAZID Hany.
+- MARICHAL-ROSIÈRE Léa.
 
-## How to launch the project
-    - In order to launch the project, you must use the VS code IDE, and execute the project via the SpringBoot Dashboard.
-    - Once spring Boot is running, you can find the generated interface of a pokemon for example, by going to localhost:8080/pokemon/Bulbasaur. 
-    This will display the entity of Bullbasaur that was parsed using its infobox.
-    
-    - A turtle file containing the entire knowledge graph can also be found in the repositpory. The file is named KG.ttl.
- 
+It aims to build a knowledge graph for Bulbapedia using semantic web technologies.
+
+## Project Technologies
+- **Language & Framework:** Java with Spring Boot
+- **Java Version:** Java 21
+- **RDF Processing:** Apache Jena for creating RDF triples and interfacing with Fuseki
+- **Parsing:** Bliki framework for parsing infoboxes
+
+## How to Launch the Project
+1. Open the project in VS Code.
+2. Run the project using the Spring Boot Dashboard.
+3. Once Spring Boot is running, navigate to `http://localhost:8080/pokemon/Bulbasaur` in your browser. This displays the entity for Bulbasaur, parsed from its infobox.
+4. A Turtle file containing the entire knowledge graph (`KG.ttl`) can be found in the repository.
