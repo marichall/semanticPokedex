@@ -16,5 +16,5 @@ It aims to build a knowledge graph for Bulbapedia using semantic web technologie
 ## How to Launch the Project
 1. Open the project in VS Code.
 2. Run the project using the Spring Boot Dashboard.
-3. Once Spring Boot is running, navigate to `http://localhost:8080/pokemon/Bulbasaur` in your browser. This displays the entity for Bulbasaur, parsed from its infobox.
+3. Once Spring Boot is running, navigate to `http://localhost:8080/pokemon/Bulbasaur/html` in your browser. This displays the entity for Bulbasaur, parsed from its infobox. (If you used /turtle, you will optain the turtle representation).
 4. A Turtle file containing the entire knowledge graph (`KG.ttl`) can be found in the repository.
