@@ -32,8 +32,11 @@ public class CreateHtmlService {
 
         System.out.println("Query: " + sparqlQuery);
         ResultSet results = fusekiService.executeSelectQuery(sparqlQuery);
-        System.out.println("Results: " + results.hasNext());
 
+        if (results == null) {
+            return "<html><body><h1>impossible de récupérer les données pour " + pokemonName + ".</h1></body></html>";
+        }
+        System.out.println("Results: " + results.hasNext());
 
         // Initialisation de la chaîne HTML
         StringBuilder htmlBuilder = new StringBuilder();
