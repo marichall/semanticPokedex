@@ -1,0 +1,747 @@
+@prefix schema: <http://schema.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix ex: <http://localhost:8080/pokemon> .
+
+# Define classes
+
+
+ex:Pokemon
+    a schema:Class ;
+    sh:property [
+        sh:path schema:name ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:jname ;
+        sh:datatype xsd:string ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:tmname ;
+        sh:datatype xsd:string ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:jtranslit ;
+        sh:datatype xsd:string ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:category ;
+        sh:datatype xsd:string ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:ndex ;
+        sh:datatype xsd:integer ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:forme ;
+        sh:datatype xsd:integer ;
+        sh:minInclusive 1 ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:form1 ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:form2 ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:form3 ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:form4 ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form5 ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ; 
+    ] ;
+    
+    sh:property [
+        sh:path ex:form6 ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:image ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:image2 ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:image3 ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:image4 ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:image5 ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 
+    ] ;
+    
+    sh:property [
+        sh:path ex:image6 ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:type1 ;
+        sh:datatype xsd:string ;
+        sh:in (
+            "Normal"
+            "Fire"
+            "Fighting"
+            "Water"
+            "Flying"
+            "Grass"
+            "Poison"
+            "Electric"
+            "Ground"
+            "Psychic"
+            "Rock"
+            "Ice"
+            "Bug"
+            "Dragon"
+            "Ghost"
+            "Dark"
+            "Steel"
+            "Fairy"
+        ) ;
+        sh:defaultValue "Unknown";
+    ] ;
+
+    sh:property [
+        sh:path ex:type2 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form2type1 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form2type2 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form3type1 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form3type2 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form4type1 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form4type2 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form5type1 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form5type2 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form6type1 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:form6type2 ;
+        sh:datatype xsd:string ;
+        sh:in ("Normal" "Fire" "Fighting" "Water" "Flying" "Grass" "Poison" "Electric" "Ground" "Psychic" "Rock" "Ice" "Bug" "Dragon" "Ghost" "Dark" "Steel" "Fairy" "Unknown") ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    # Abilities
+    sh:property [
+        sh:path ex:abilitylayout ;
+        sh:datatype xsd:string ;
+        sh:pattern "^(1|2|1\\+2|2\\+1|2\\+2)$" ; # Regex for allowed layouts
+    ] ;
+
+    sh:property [
+        sh:path ex:ability1 ;
+        sh:datatype xsd:string ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:ability1note ;
+        sh:datatype xsd:string ;
+        sh:pattern "^(1|2|1\\+2|2\\+1|2\\+2)$" ; 
+    ] ;
+
+    sh:property [
+        sh:path ex:ability2 ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:ability2Note ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ; 
+    ] ;
+
+    sh:property [
+        sh:path ex:ability2-1 ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ; 
+    ] ;
+
+    sh:property [
+        sh:path ex:ability2-2 ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ; 
+    ] ;
+
+    sh:property [
+        sh:path ex:ability3-1 ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+        sh:maxCount 1 ; 
+    ] ;
+
+    sh:property [
+        sh:path ex:abilityCol3 ;
+        sh:datatype xsd:integer ;
+        sh:in ( 1 2 );
+    ] ;
+
+    sh:property [
+        sh:path ex:ability3-2 ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ; 
+    ] ;
+
+    sh:property [
+        sh:path ex:abilitym ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilitycolm ;
+        sh:datatype xsd:integer ;
+        sh:in ( 1 2 ) ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilitym2 ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilityd ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilitydcaption ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilitycold ;
+        sh:datatype xsd:integer ;
+        sh:in ( 1 2 );
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilityd2 ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilityd2caption ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilitydold ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:abilitydoldcaption ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:gendercode ;
+        sh:datatype xsd:integer ;
+        sh:in (256 255 254 223 191 127 63 31 0) ;
+    ] ;
+
+    sh:property [
+        sh:path ex:catchRate ;
+        sh:datatype xsd:integer ;
+    ] ;
+
+    sh:property [
+    sh:path ex:egggroupn ;
+    sh:datatype xsd:integer ;
+    sh:in (0 1 2) ; 
+    sh:minCount 0 ;
+] ;
+
+    sh:property [
+        sh:path ex:egggroup1 ;
+        sh:datatype xsd:string;
+        sh:in ("Monster" "Human-Like" "Water 1" "Water 3" "Bug Mineral" "Flying" "Amorphous" "Field" "Water 2" "Fairy" "Ditto" "Grass" "Dragon" "No Eggs Discovered") ;
+    ] ;
+
+    sh:property [
+        sh:path ex:egggroup1note ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:egggroup2 ;
+        sh:datatype xsd:string ;
+        sh:in ("Monster" "Human-Like" "Water 1" "Water 3" "Bug Mineral" "Flying" "Amorphous" "Field" "Water 2" "Fairy" "Ditto" "Grass" "Dragon" "No Eggs" "Discovered") ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:egggroup2note ;
+        sh:datatype xsd:string ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:eggcycles ;
+        sh:datatype xsd:integer ;
+    ] ;
+
+    sh:property [
+        sh:path ex:height-ftin ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    sh:property [
+        sh:path ex:height-m ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+    sh:property [
+        sh:path ex:height-ftin2 ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    sh:property [
+        sh:path ex:height-m2 ;
+        sh:datatype xsd:decimal ;  
+    ] ;
+
+    sh:property [
+        sh:path ex:height-ftin3 ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    sh:property [
+        sh:path ex:height-m3 ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+    sh:property [
+        sh:path ex:height-ftin4 ;
+        sh:datatype xsd:string ;
+    ] ;
+    sh:property [
+        sh:path ex:height-m4 ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+    # Weight properties
+    sh:property [
+        sh:path ex:weight-lbs ;
+        sh:datatype xsd:decimal ;
+    ] ; 
+
+    sh:property [
+        sh:path ex:weight-kg ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+    sh:property [
+        sh:path ex:weight-lbs2 ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+    sh:property [
+        sh:path ex:weight-kg2 ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+    sh:property [
+        sh:path ex:weight-lbs3 ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+     sh:property [
+        sh:path ex:weight-kg3 ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+    sh:property [
+        sh:path ex:weight-lbs4 ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+    sh:property [
+        sh:path ex:weight-kg4  ;
+        sh:datatype xsd:decimal ;
+    ] ;
+
+
+    # Mega Stone properties
+    sh:property [
+        sh:path ex:mega ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    sh:property [
+        sh:path ex:mega2 ;
+        sh:datatype xsd:string ;
+    ];
+
+    sh:property [
+        sh:path ex:generation ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+    ] ;
+
+     sh:property [
+        sh:path ex:expyield ;
+        sh:datatype xsd:integer ;
+        sh:minCount 1 ;
+    ] ;
+
+     sh:property [
+        sh:path ex:oldexp ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0;
+    ] ;
+    
+    sh:property [
+        sh:path ex:g4exp ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+    
+    sh:property [
+        sh:path ex:lv100exp ;
+        sh:datatype xsd:integer ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evforms ;
+        sh:datatype xsd:integer ;
+        sh:minCount 1 ;  
+        sh:in ( 1 2 3 4 ) ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evtotal ;
+        sh:datatype xsd:integer ;
+        sh:maxCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evhp ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0;
+    ] ;
+
+    sh:property [
+        sh:path ex:evat ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0;
+    ] ;
+
+    sh:property [
+        sh:path ex:evde ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsa ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsd ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsp ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0;
+    ] ;
+
+    sh:property [
+        sh:path ex:evhp2 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evat2 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evde2 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsa2 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsd2 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsp2 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+
+    sh:property [
+        sh:path ex:evhp3 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evat3 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evde3 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsa3 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsd3 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsp3 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evhp4 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evat4 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evde4 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsa4 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsd4 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:evsp4 ;
+        sh:datatype xsd:integer ;
+        sh:minCount 0 ;
+    ] ;
+
+
+    sh:property [
+        sh:path ex:body ;
+        sh:in (
+            "01" "02" "03" "04" "05" "06" "07"
+            "08" "09" "10" "11" "12" "13" "14"
+            "Unknown"
+        ) ;
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:formbody ;
+        sh:datatype xsd:boolean ; 
+        sh:minCount 0 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:foot2 ;
+        sh:minCount 0 ;
+        sh:datatype xsd:string ;
+    ] ;
+
+    sh:property [
+        sh:path ex:color ;
+        sh:in (
+            "Red" "Blue" "Green" "Yellow" "Purple" "Pink"
+            "Brown" "Black" "Gray" "White" "Unknown"
+        ) ;
+        sh:minCount 0 ;
+    ] ;
+
+
+    sh:property [
+        sh:path ex:formcolors ;
+        sh:datatype xsd:boolean ; # Boolean flag
+        sh:minCount 0 ; # Optional
+    ] ;
+
+    sh:property [
+        sh:path ex:friendship ;
+        sh:datatype xsd:integer ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:pokefordex ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+    ] ;
+
+    sh:property [
+        sh:path ex:nocat ;
+        sh:in ( "true" ) ;
+        sh:maxCount 1 ;
+    ].
+
+
