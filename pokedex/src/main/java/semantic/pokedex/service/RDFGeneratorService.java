@@ -85,8 +85,6 @@ public class RDFGeneratorService {
             Property property = model.createProperty(exNS, key);
             pokemonResource.addProperty(property, replacedText);
         }
-        // System.out.println("RDF généré pour : " + prefix + " : " + pokemonResource);
-        // Add model to Fuseki
         fusekiService.addModel(model);
     }
 
