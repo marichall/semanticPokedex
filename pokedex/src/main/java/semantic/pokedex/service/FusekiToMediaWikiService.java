@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.jena.base.Sys;
 import org.apache.jena.query.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,7 +82,7 @@ public class FusekiToMediaWikiService {
 
                 if (matcher.matches()) {
                     String valueType = matcher.group(1); 
-                                     
+                    System.out.println("Value type: " + valueType);                
                     rdfGeneratorService.generateInfoboxRdf(infoboxType, infoboxData, valueType);
                 }
             }

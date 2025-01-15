@@ -7,12 +7,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.jena.base.Sys;
 import org.apache.jena.rdf.model.Model;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import semantic.pokedex.service.CategoryPageService;
@@ -110,10 +113,10 @@ public class ApiController {
         }
         // List of infoboxes to process, not all
         List<String> infoBoxes = new ArrayList<String>() {{
-            add("AbilityInfobox/header");
+            // add("AbilityInfobox/header");
             // add("Infobox location");
             // add("MoveInfobox");
-            // add("Pokémon Infobox");
+            add("Pokémon Infobox");
         }};
         final Map<String, String> TEMPLATE_TO_PREFIX = new HashMap<>();
 
@@ -150,6 +153,7 @@ public class ApiController {
                     params = t.getParams();
                     // Here, the first argument gives us the type of template in order to correctly identify each resource
                     rdfGeneratorService.generateInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page);
+                    System.out.println("RDF generated for " + page);
             }
         }
     }
@@ -178,16 +182,15 @@ public class ApiController {
              List<Map<String,String>> tsvData = tsvParser.parseTsv("pokedex_i18n/pokedex-i18n.tsv");
              for(String type : ListOfTypes){
                  List<Map<String,String>> pokemonData = tsvParser.filterPokemonData(tsvData, type);
-                 Model model = tsvParser.generateRdfForPokemonInTsvFile(pokemonData, "ability");
+                 Model model = tsvParser.generateRdfForPokemonInTsvFile(pokemonData, type);
                  fusekiService.addModel(model);
-                 return "RDF generated for all Pokémon in the TSV file.";
              }
+             return "RDF generated for all Pokémon in the TSV file.";
 
          } catch (IOException e) {
              e.printStackTrace();
              return "Error reading the TSV file.";
          }
-         return "RDF generated for all Pokémon in the TSV file.";
     }
 
     @GetMapping(value = "/api/extractInfoboxFromMediaWiki", produces = MediaType.TEXT_PLAIN_VALUE)
@@ -197,9 +200,12 @@ public class ApiController {
     }
 
 
-    @GetMapping(value = "/{type}/{name}")
-    public String home(@PathVariable String type, @PathVariable String name) {
-        System.out.println("Type: " + type + ", Name: " + name);
-        return createHtmlService.createHtmlInfobox(type, name);
+    @GetMapping(value = "/{type}/{name}/{acceptHeader}")
+    public String getEntity(@PathVariable String type, @PathVariable String name, @PathVariable String acceptHeader) {
+        if (acceptHeader.contains("turtle")) {
+            return createHtmlService.createHtmlTurtleDescription(type, name);
+        } else { 
+            return createHtmlService.createHtmlInfobox(type, name);
+        }
     }
 }

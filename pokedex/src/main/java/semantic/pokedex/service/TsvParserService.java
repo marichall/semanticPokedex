@@ -82,7 +82,6 @@ public class TsvParserService {
         Property name = model.createProperty("https://schema.org/name");
         Resource pokemonPage;
         Map<String,String> englishPokemonName = getEnglishPokemonName(pokemonData);
-        System.err.println("the page is " + englishPokemonName);
         String uri = "http://localhost:8080/" + templateType + "/";
         String typeId = "" ; 
         String language = ""; 
@@ -90,11 +89,10 @@ public class TsvParserService {
         
         for (Map<String,String> pokemon : pokemonData) {
             typeId = pokemon.get("id");
-            language = pokemon.get("language").toLowerCase().substring(0, 2);
+            language = getEncodeLanguage(pokemon.get("language"));
             label = pokemon.get("label");
             String englishName = englishPokemonName.get(typeId);
             if(englishName != null){
-                System.err.println("english pokemonName is " + englishName + " and id is " + typeId +  " and language is " + language);
                 pokemonPage = model.createResource(uri + generatorService.encodeName(englishName));
                 model.add(pokemonPage, name, model.createLiteral(label, language));
             }
@@ -103,5 +101,29 @@ public class TsvParserService {
             }
         }
         return model;
+    }
+
+    private String getEncodeLanguage(String language) {
+        if ("english".equals(language)) {
+            return "en";
+        } else if ("French".equals(language)) {
+            return "fr";
+        } else if ("German".equals(language)) {
+            return "de";
+        } else if ("Japanese".equals(language)) {
+            return "ja";
+        } else if ("Korean".equals(language)) {
+            return "ko";
+        } else if ("Chinese".equals(language)) {
+            return "zh";
+        } else if ("Spanish".equals(language)) {
+            return "es";
+        } else if ("Italian".equals(language)) {
+            return "it";
+        } else if("Czech".equals(language)){
+            return "cs";
+        } else {
+            return null;
+        }
     }
 }
