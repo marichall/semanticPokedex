@@ -1,8 +1,6 @@
 package semantic.pokedex.service;
 
 import java.util.*;
-
-import org.apache.jena.base.Sys;
 import org.apache.jena.rdf.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

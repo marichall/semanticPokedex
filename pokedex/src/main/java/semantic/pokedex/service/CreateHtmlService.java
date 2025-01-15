@@ -19,6 +19,7 @@ public class CreateHtmlService {
 
     private static final String API_ENDPOINT = "https://pokeapi.co/api/v2/pokemon/";
 
+    // Create an HTML infobox for a given entity
     public String createHtmlInfobox(String type, String name) {
 
         String sparqlQuery = String.format(
@@ -91,6 +92,7 @@ public class CreateHtmlService {
         return htmlBuilder.toString();
     }
 
+    // Get the image of a Pokémon
     public String getPokemonImage(String pokemonName) {
         String url = API_ENDPOINT + pokemonName.toLowerCase();
 
@@ -114,6 +116,7 @@ public class CreateHtmlService {
         }
     }
 
+    // Create a Turtle description for a given entity
     public String createTurtleDescription(String type, String name) {
         String sparqlQuery = String.format(
             "SELECT ?predicate ?object WHERE { <%s> ?predicate ?object }", mediaWikiApiService.URI + "/" + type + "/" + name);
@@ -159,7 +162,7 @@ public class CreateHtmlService {
         return turtleBuilder.toString();
     }
 
-
+    // Create an HTML Turtle description for a given entity
     public String createHtmlTurtleDescription(String type, String name) {
         String turtleDescription = createTurtleDescription(type, name);
         String[] lines = turtleDescription.split("\n");

@@ -6,18 +6,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.apache.jena.base.Sys;
 import org.apache.jena.rdf.model.Model;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import semantic.pokedex.service.CategoryPageService;
 import semantic.pokedex.service.CreateHtmlService;
 import semantic.pokedex.service.MediaWikiApiService;
@@ -59,12 +53,22 @@ public class ApiController {
     @Autowired
     private CreateHtmlService createHtmlService;
 
+    /**
+     * Endpoint to add Bulbasaur data to Fuseki.
+     * 
+     * @return A plain text message indicating the result of the operation.
+     */
     @GetMapping(value = "/api/addBulbasaurToFuseki", produces = MediaType.TEXT_PLAIN_VALUE)
     public String addPokemon() {
         fusekiService.addBulbasaurData();
         return "Added Bulbasaur data to Fuseki.";
     }
 
+    /**
+     * Endpoint to generate Bulbasaur data in rdf.
+     * 
+     * @return A plain text message indicating the result of the operation.
+     */
     @GetMapping(value = "/api/generateRdfBulbasaur", produces = "application/rdf+xml")
     public String generateRdfForBulbasaur() {
         try {
@@ -79,7 +83,11 @@ public class ApiController {
         }
     }
 
-
+    /**
+     * Endpoint to generate rdf for all Pokémon in the Pokémon list.
+     * 
+     * @return A plain text message indicating the result of the operation.
+     */
     @GetMapping(value = "/api/generateRdfPokemonList", produces = MediaType.TEXT_PLAIN_VALUE)
     public String generateRdfPokemonList(String infoBoxType) throws IOException {
         List<String> pokemonList = pokemonListService.getPokemonList();
@@ -105,6 +113,11 @@ public class ApiController {
         return "RDF generation completed for " + count + " Pokémon.";
     }
 
+    /**
+     * Endpoint to generate rdf for all Pokémon in the Pokémon list.
+     * 
+     * @return A plain text message indicating the result of the operation.
+     */
     @GetMapping(value = "/api/generateAllInfoboxForAllPokemons", produces = MediaType.TEXT_PLAIN_VALUE)
     public String generateAllInfoboxForAllPokemons() throws IOException {
         List<String> infoboxTypes = categoryPageService.getInfoboxTypes();
@@ -126,7 +139,6 @@ public class ApiController {
         TEMPLATE_TO_PREFIX.put("Infobox location", "location");
         TEMPLATE_TO_PREFIX.put("AbilityInfobox/header", "ability");
         TEMPLATE_TO_PREFIX.put("MoveInfobox", "move");
-        // System.err.println(infoboxTypes);
 
         List<String> listOfPages = null;
         String pageWikitext = "";
@@ -160,6 +172,11 @@ public class ApiController {
     return "RDF generation completed ";
     }
 
+    /**
+     * Endpoint to generate triples for all Pages found.
+     * 
+     * @return A plain text message indicating the result of the operation.
+     */
     @GetMapping(value = "/api/generateTriplesForAllPages", produces = MediaType.TEXT_PLAIN_VALUE)
     public String generateTriplesForAllPages() {
         Model model = mediaWikiApiService.generateTriplesForAllPages();
@@ -167,7 +184,11 @@ public class ApiController {
         return "Triples generated for all pages.";
     }
 
-
+    /**
+     * Endpoint to generate triples with the tsv file.
+     * 
+     * @return A plain text message indicating the result of the operation.
+     */
     @GetMapping(value="/api/generateTriplesWithTsvFile", produces = MediaType.TEXT_PLAIN_VALUE)
     public String parsingController() {
         List<String> ListOfTypes = new ArrayList<String>() {{
@@ -193,13 +214,22 @@ public class ApiController {
          }
     }
 
+    /**
+     * Endpoint to extract infobox from MediaWiki.
+     * 
+     * @return A plain text message indicating the result of the operation.
+     */
     @GetMapping(value = "/api/extractInfoboxFromMediaWiki", produces = MediaType.TEXT_PLAIN_VALUE)
     public String processMediaWikiInfobox() throws IOException {
         fusekiToMediaWikiService.extractInfoboxFromMediaWiki();
         return "MediaWiki infobox processing completed.";
     }
 
-
+    /**
+     * Endpoint to have a turtle or an html of our results.
+     * 
+     * @return the html page.
+     */
     @GetMapping(value = "/{type}/{name}/{acceptHeader}")
     public String getEntity(@PathVariable String type, @PathVariable String name, @PathVariable String acceptHeader) {
         if (acceptHeader.contains("turtle")) {
