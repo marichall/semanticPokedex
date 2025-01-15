@@ -143,12 +143,13 @@ public class ApiController {
                 templates = parserService.parseTemplates(pageWikitext);
                 infoBoxToParse = templates.stream().filter(t -> iterator.equalsIgnoreCase(t.getName())).collect(Collectors.toList());
                 page = page.replaceAll("[/:\\\\]", "_");
-
+                page = page.replaceAll("\\s*\\([^\\)]*\\)", "");
                 // create the rdf for each infobox
                 for (TemplateData t : infoBoxToParse) {
                     params = t.getParams();
                     // Here, the first argument gives us the type of template in order to correctly identify each resource
-                    rdfGeneratorService.generateInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page); 
+                    rdfGeneratorService.generateInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page);
+                    System.err.println(page);
             }
         }
     }
