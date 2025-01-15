@@ -110,10 +110,10 @@ public class ApiController {
         }
         // List of infoboxes to process, not all
         List<String> infoBoxes = new ArrayList<String>() {{
-            // add("AbilityInfobox/header");
+            add("AbilityInfobox/header");
             // add("Infobox location");
             // add("MoveInfobox");
-            add("Pokémon Infobox");
+            // add("Pokémon Infobox");
         }};
         final Map<String, String> TEMPLATE_TO_PREFIX = new HashMap<>();
 
@@ -123,7 +123,7 @@ public class ApiController {
         TEMPLATE_TO_PREFIX.put("Infobox location", "location");
         TEMPLATE_TO_PREFIX.put("AbilityInfobox/header", "ability");
         TEMPLATE_TO_PREFIX.put("MoveInfobox", "move");
-        System.err.println(infoboxTypes);
+        // System.err.println(infoboxTypes);
 
         List<String> listOfPages = null;
         String pageWikitext = "";
@@ -150,7 +150,6 @@ public class ApiController {
                     params = t.getParams();
                     // Here, the first argument gives us the type of template in order to correctly identify each resource
                     rdfGeneratorService.generateInfoboxRdf(TEMPLATE_TO_PREFIX.get(iterator), params, page);
-                    System.err.println(page);
             }
         }
     }
@@ -198,10 +197,9 @@ public class ApiController {
     }
 
 
-    @GetMapping(value = "/pokemon/{name}")
-    public String home(@PathVariable String name) {
-        System.out.println("Name: " + name);
-        return createHtmlService.createHtmlForPokemonInfobox(name);
+    @GetMapping(value = "/{type}/{name}")
+    public String home(@PathVariable String type, @PathVariable String name) {
+        System.out.println("Type: " + type + ", Name: " + name);
+        return createHtmlService.createHtmlInfobox(type, name);
     }
-
 }

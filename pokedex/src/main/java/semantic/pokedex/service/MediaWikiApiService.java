@@ -1,6 +1,8 @@
 package semantic.pokedex.service;
 
 import java.util.*;
+
+import org.apache.jena.base.Sys;
 import org.apache.jena.rdf.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -201,10 +203,28 @@ public class MediaWikiApiService {
 
         Resource pageResource;
         Resource entityResource;
-        
+        String pokemonName = "";
         for (String page : allPages) {
             pageResource = model.createResource(bullbapediaWikiUrl + "/" + encodeTitle(page));
-            entityResource = model.createResource(URI + "/" + encodeTitle(page));
+            if (page.contains("(Pokémon)") ||page.contains("(Pokemon)")) {
+                pokemonName = page.replace(" (Pokémon)", "");
+                pokemonName = page.replace(" (Pokemon)", "");
+                entityResource = model.createResource(URI + "/pokemon/" + encodeTitle(pokemonName));
+            }else if(page.contains("(Ability)")){
+                pokemonName = page.replace(" (Ability)", "");
+                entityResource = model.createResource(URI + "/ability/" + encodeTitle(pokemonName));
+            }
+            else if(page.contains("(move)")){
+                pokemonName = page.replace(" (move)", "");
+                entityResource = model.createResource(URI + "/move/" + encodeTitle(pokemonName));
+            }
+            else if(page.contains("(Location)")){
+                pokemonName = page.replace(" (Location)", "");
+                entityResource = model.createResource(URI + "/location/" + encodeTitle(pokemonName));
+            }
+            else{
+                entityResource = model.createResource(URI + "/" + encodeTitle(page));
+            }
             model.add(entityResource, mainEntityOfPage, pageResource);
 
         }
