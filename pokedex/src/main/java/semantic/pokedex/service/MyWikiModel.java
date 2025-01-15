@@ -64,7 +64,7 @@ public void appendInternalLink(
         // Ajout d'un titre, si besoin
         aTagNode.addAttribute("title", topic, true);
 
-        // Cas où on souhaiterait utiliser la classe CSS, tu peux le faire
+        // Cas où on souhaiterait utiliser la classe CSS
         if (cssClass != null) {
             aTagNode.addAttribute("class", cssClass, true);
         }
@@ -79,14 +79,13 @@ public void appendInternalLink(
         
         if (parseRecursive) {
             // Au besoin, ré-analyse la description comme du wiki
-            // (peut être utile si on veut appliquer la syntaxe wiki à l'intérieur du lien)
             WikipediaPreTagParser.parseRecursive(description, this, false, true);
         } else {
             // Sinon, on ajoute juste du texte brut
             aTagNode.addChild(new ContentToken(description));
         }
 
-        // Ferme le tag
+        // Et on ferme le tag ici
         popNode();
 
         // On return pour ne pas appeler la logique par défaut
