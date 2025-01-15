@@ -126,9 +126,9 @@ public class ApiController {
         }
         // List of infoboxes to process, not all
         List<String> infoBoxes = new ArrayList<String>() {{
-            // add("AbilityInfobox/header");
-            // add("Infobox location");
-            // add("MoveInfobox");
+            add("AbilityInfobox/header");
+            add("Infobox location");
+            add("MoveInfobox");
             add("Pokémon Infobox");
         }};
         final Map<String, String> TEMPLATE_TO_PREFIX = new HashMap<>();
@@ -223,6 +223,12 @@ public class ApiController {
     public String processMediaWikiInfobox() throws IOException {
         fusekiToMediaWikiService.extractInfoboxFromMediaWiki();
         return "MediaWiki infobox processing completed.";
+    }
+
+    @GetMapping(value = "/api/writeInTurtleFile", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String writeDatalInFile() throws IOException {
+        fusekiService.exportAllDataToTurtle();
+        return "Data transfer into a turtle file completed.";
     }
 
     /**
