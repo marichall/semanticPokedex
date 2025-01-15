@@ -8,12 +8,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.jena.rdf.model.Model;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import semantic.pokedex.service.CategoryPageService;
+import semantic.pokedex.service.CreateHtmlService;
 import semantic.pokedex.service.MediaWikiApiService;
 import semantic.pokedex.service.PokemonListService;
 import semantic.pokedex.service.RDFGeneratorService;
@@ -24,7 +26,7 @@ import semantic.pokedex.service.TsvParserService;
 import semantic.pokedex.service.WikitextParserService;
 
 @RestController
-public class RDFController {
+public class ApiController {
 
     @Autowired
     FusekiService fusekiService;
@@ -50,13 +52,16 @@ public class RDFController {
     @Autowired
     private FusekiToMediaWikiService fusekiToMediaWikiService;
 
-    @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
+    @Autowired
+    private CreateHtmlService createHtmlService;
+
+    @GetMapping(value = "/api/addBulbasaurToFuseki", produces = MediaType.TEXT_PLAIN_VALUE)
     public String addPokemon() {
         fusekiService.addBulbasaurData();
         return "Added Bulbasaur data to Fuseki.";
     }
 
-    @GetMapping(value = "/generateRdfBulbasaur", produces = "application/rdf+xml")
+    @GetMapping(value = "/api/generateRdfBulbasaur", produces = "application/rdf+xml")
     public String generateRdfForBulbasaur() {
         try {
             String filePath = "../../../../InfoBox/Bullbasaur_Infobox.txt";
@@ -71,7 +76,7 @@ public class RDFController {
     }
 
 
-    @GetMapping(value = "/generateRdfPokemonList", produces = "text/plain")
+    @GetMapping(value = "/api/generateRdfPokemonList", produces = MediaType.TEXT_PLAIN_VALUE)
     public String generateRdfPokemonList(String infoBoxType) throws IOException {
         List<String> pokemonList = pokemonListService.getPokemonList();
         if (pokemonList.isEmpty()) {
@@ -96,7 +101,7 @@ public class RDFController {
         return "RDF generation completed for " + count + " Pokémon.";
     }
 
-    @GetMapping(value = "/generateAllInfoboxForAllPokemons", produces = "text/plain")
+    @GetMapping(value = "/api/generateAllInfoboxForAllPokemons", produces = MediaType.TEXT_PLAIN_VALUE)
     public String generateAllInfoboxForAllPokemons() throws IOException {
         List<String> infoboxTypes = categoryPageService.getInfoboxTypes();
         if (infoboxTypes.isEmpty()) {
@@ -150,7 +155,7 @@ public class RDFController {
     return "RDF generation completed ";
     }
 
-    @GetMapping(value = "/generateTriplesForAllPages", produces = "text/plain")
+    @GetMapping(value = "/api/generateTriplesForAllPages", produces = MediaType.TEXT_PLAIN_VALUE)
     public String generateTriplesForAllPages() {
         Model model = mediaWikiApiService.generateTriplesForAllPages();
         fusekiService.addModel(model);
@@ -158,7 +163,7 @@ public class RDFController {
     }
 
 
-    @GetMapping(value="/generateTriplesWithTsvFile", produces = "text/plain")
+    @GetMapping(value="/api/generateTriplesWithTsvFile", produces = MediaType.TEXT_PLAIN_VALUE)
     public String parsingController() {
         List<String> ListOfTypes = new ArrayList<String>() {{
             add("ability");
@@ -184,10 +189,16 @@ public class RDFController {
          return "RDF generated for all Pokémon in the TSV file.";
     }
 
-    @GetMapping(value = "/extractInfoboxFromMediaWiki", produces = "text/plain")
+    @GetMapping(value = "/api/extractInfoboxFromMediaWiki", produces = MediaType.TEXT_PLAIN_VALUE)
     public String processMediaWikiInfobox() throws IOException {
         fusekiToMediaWikiService.extractInfoboxFromMediaWiki();
         return "MediaWiki infobox processing completed.";
+    }
+
+
+    @GetMapping(value = "/")
+    public String home() {
+        return createHtmlService.createHtmlForPokemonInfobox("Bulbasaur");
     }
 
 }

@@ -35,6 +35,7 @@ public class FusekiToMediaWikiService {
         ResultSet results = fusekiService.executeSelectQuery(sparqlQuery);
         List<String> pagesUrl = new ArrayList<>();
         Map<String, String> infoboxData;
+        String infoboxType = "";
 
         // Storing our URLs in a list
         while (results.hasNext()) {
@@ -51,17 +52,21 @@ public class FusekiToMediaWikiService {
             infoboxData = null;
             if(wikitext.contains("{{Pokémon Infobox")) {
                 infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "Pokémon Infobox");
+                infoboxType = "pokemon";
 
-            }else if(wikitext.contains("{{RegionInfobox")) {
-                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "RegionInfobox");
+            }else if(wikitext.contains("{{Infobox location")) {
+                infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "Infobox location");
+                infoboxType = "region";
 
             }
-            else if(wikitext.contains("{{AbilityInfobox")) {
+            else if(wikitext.contains("{{AbilityInfobox/header")) {
                 infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "AbilityInfobox");
+                infoboxType = "ability";
 
             }
             else if(wikitext.contains("{{MoveInfobox")) {
                 infoboxData = wikitextParserService.extractTemplateParameters(wikitext, "MoveInfobox");
+                infoboxType = "move";
 
             } 
                 
@@ -75,9 +80,8 @@ public class FusekiToMediaWikiService {
 
                 if (matcher.matches()) {
                     String valueType = matcher.group(1); 
-                    String type = matcher.group(2);
                                      
-                    rdfGeneratorService.generateInfoboxRdf(type, infoboxData, valueType);
+                    rdfGeneratorService.generateInfoboxRdf(infoboxType, infoboxData, valueType);
                 }
             }
         }
