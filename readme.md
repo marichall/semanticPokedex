@@ -26,10 +26,10 @@ It aims to build a knowledge graph for Bulbapedia using semantic web technologie
 8. In order to export all the data in a turtle format, you can navigate to `http://localhost:8080/api/writeInTurtleFile`. This will export all the added data from PokemonDataset in fuseli, and export it as a turtle file named KG.ttl.
 9. If you would like to see a pokemon, a move, a location, or an ability in an html format, naviagte to `http://localhost:8080/category/name/html` in your browser. This displays the entity name for a category (categories are pokemon,move, location,     ability) , parsed from their infoboxes.
    For example :
-     - http://localhost:8080/pokemon/Bulbasaur/html will give you the html representation of the pokemon Bulbasaur. (If you used /turtle, you will optain the turtle representation).
-     - http://localhost:8080/move/Pound/html will give you the html representation of the move Pound.
-     - http://localhost:8080/ability/Blaze/html will give you the html representation of the blaze ability.
-     - http://localhost:8080/location/Abandoned_Ship/html will give you the html representaion of the location Abandoned Ship.
+     - `http://localhost:8080/pokemon/Bulbasaur/html` will give you the html representation of the pokemon Bulbasaur. (If you used /turtle, you will optain the turtle representation).
+     - `http://localhost:8080/move/Pound/html` will give you the html representation of the move Pound.
+     - `http://localhost:8080/ability/Blaze/html` will give you the html representation of the blaze ability.
+     - `http://localhost:8080/location/Abandoned_Ship/html` will give you the html representaion of the location Abandoned Ship.
      - In case you want to view the RDF of an entity in the browser, use the same link, ie `http://localhost:8080/pokemon/Bulbasaur/html`, but replace `html` with `turtle`.
    The lists of moves, pokemons, abilities and locations can be found here :
      - List of moves : https://bulbapedia.bulbagarden.net/wiki/List_of_moves
