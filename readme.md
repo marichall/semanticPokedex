@@ -14,7 +14,9 @@ It aims to build a knowledge graph for Bulbapedia using semantic web technologie
 - **Parsing:** Bliki framework for parsing infoboxes
 
 ## How to Launch the Project
-1. Open the project in VS Code.
+### 1. Open the Project
+- Open the project in **VS Code**.
+
 
 2. Run the project by navigating to the Spring Boot Dashboard (represented by a hexagon with a power button inside of it, located at the left side of VS Code), then click on the run button next to "pokedex".
    There's no need to add any dependencies, because all dependencies are added in the pom.xml file located in the project.
