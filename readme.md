@@ -48,11 +48,11 @@ It aims to build a knowledge graph for Bulbapedia using semantic web technologie
      - `http://localhost:8080/location/Abandoned_Ship/html` will give you the html representaion of the location Abandoned Ship.
      - In case you want to view the RDF of an entity in the browser, use the same link, ie `http://localhost:8080/pokemon/Bulbasaur/html`, but replace `html` with `turtle`.
 
-### 9. Useful Links for the categories 
+## Useful Links for the categories 
    - The lists of moves, pokemons, abilities and locations can be found here :
      - List of moves : https://bulbapedia.bulbagarden.net/wiki/List_of_moves
      - List of pokemons and abilites : https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_Ability
      - List of locations : https://bulbapedia.bulbagarden.net/wiki/List_of_locations_by_name
 
-### 10. SHACL
+## SHACL
    - If you want to see the SHACL file, it is in the pokedex folder, and its name is shacl.ttl.
