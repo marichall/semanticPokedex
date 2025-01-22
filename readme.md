@@ -26,7 +26,7 @@ It aims to build a knowledge graph for Bulbapedia using semantic web technologie
 - Launch the Fuseki server and create a dataset named `PokemonDataset` (case-sensitive).
 
 ### 4. Generate RDF Triples
-   - Now that both fuseki and our application is running, open your browser, and go to `http://localhost:8080/api/generateAllInfoboxForAllPokemons`. This page will create the RDF triples for all the pokemons, moves, locations, and abilities.
+   - Now that both fuseki and our application is running, open your browser, and go to `http://localhost:8080/api/generateAllInfoboxForAllPokemons`. <br> This page will create the RDF triples for all the pokemons, moves, locations, and abilities.
    This call will take a long time before it's complete, so if you don't want to wait, we suggest you to wait 5 minutes, and stop the spring boot server by pressing the squared stop button, or by pressing Ctrl + C in the VS Code terminal.
    If the program is interrupted, you need to run the localhost:8080 server again, like explained in step 2.
 
