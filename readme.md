@@ -17,11 +17,6 @@ It aims to build a knowledge graph for Bulbapedia using semantic web technologie
 ### 1. Open the Project
 - Open the project in **VS Code**.
 
-
-
-### 1. Open the Project
-- Open the project in **VS Code**.
-
 ### 2. Run the Project
 - Navigate to the **Spring Boot Dashboard** (hexagon with a power button icon on the left sidebar in VS Code).
 - Click the **Run** button next to `pokedex`.
