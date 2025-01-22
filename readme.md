@@ -52,4 +52,7 @@ It aims to build a knowledge graph for Bulbapedia using semantic web technologie
    - The lists of moves, pokemons, abilities and locations can be found here :
      - List of moves : https://bulbapedia.bulbagarden.net/wiki/List_of_moves
      - List of pokemons and abilites : https://bulbapedia.bulbagarden.net/wiki/List_of_Pok%C3%A9mon_by_Ability
-     - List of locations : https://bulbapedia.bulbagarden.net/wiki/List_of_locations_by_name 
+     - List of locations : https://bulbapedia.bulbagarden.net/wiki/List_of_locations_by_name
+
+### 10. SHACL
+   - If you want to see the SHACL file, it is in the pokedex folder, and its name is shacl.ttl.
